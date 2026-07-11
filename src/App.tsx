@@ -34,9 +34,23 @@ import HistoryLogs from './components/HistoryLogs';
 import HelpSupport from './components/HelpSupport';
 
 export default function App() {
-  const [user, setUser] = useState<UserProfile>(INITIAL_USER);
-  const [pass, setPass] = useState<MtcPass>(INITIAL_PASS);
+  const [user, setUser] = useState<UserProfile>(() => {
+    const saved = localStorage.getItem('findback_user');
+    return saved ? JSON.parse(saved) : INITIAL_USER;
+  });
+  const [pass, setPass] = useState<MtcPass>(() => {
+    const saved = localStorage.getItem('findback_pass');
+    return saved ? JSON.parse(saved) : INITIAL_PASS;
+  });
   const [activeTab, setActiveTab] = useState<TabType>('passes');
+
+  useEffect(() => {
+    localStorage.setItem('findback_user', JSON.stringify(user));
+  }, [user]);
+
+  useEffect(() => {
+    localStorage.setItem('findback_pass', JSON.stringify(pass));
+  }, [pass]);
 
   // Modular screen/form display states
   const [showConfigurator, setShowConfigurator] = useState(false);

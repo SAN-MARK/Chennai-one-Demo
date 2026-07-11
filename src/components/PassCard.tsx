@@ -3,6 +3,106 @@ import { MtcPass } from '../types';
 import { ShieldCheck, Calendar, Info, QrCode, Camera, Upload } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
+const MtcLogoSvg = () => (
+  <svg viewBox="0 0 100 100" className="w-14 h-14 select-none drop-shadow-md">
+    <defs>
+      {/* Golden gradient for the emblem */}
+      <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#fff3b3" />
+        <stop offset="30%" stopColor="#d1a119" />
+        <stop offset="70%" stopColor="#8c6603" />
+        <stop offset="100%" stopColor="#ffe680" />
+      </linearGradient>
+      {/* Dark outline/shadow gradient for text/lines */}
+      <linearGradient id="darkGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#543c01" />
+        <stop offset="100%" stopColor="#2e2100" />
+      </linearGradient>
+    </defs>
+
+    {/* Ribbon Wings in Background (Left and Right Triangles/Tails) */}
+    {/* Left Ribbon Wing */}
+    <path 
+      d="M 15,50 L 30,35 L 35,50 L 30,65 Z" 
+      fill="url(#goldGrad)" 
+      stroke="url(#darkGoldGrad)" 
+      strokeWidth="1.5" 
+      strokeLinejoin="round"
+    />
+    {/* Right Ribbon Wing */}
+    <path 
+      d="M 85,50 L 70,35 L 65,50 L 70,65 Z" 
+      fill="url(#goldGrad)" 
+      stroke="url(#darkGoldGrad)" 
+      strokeWidth="1.5" 
+      strokeLinejoin="round"
+    />
+
+    {/* Outer Double-Stroke Circle */}
+    <circle 
+      cx="50" 
+      cy="50" 
+      r="38" 
+      fill="url(#goldGrad)" 
+      stroke="url(#darkGoldGrad)" 
+      strokeWidth="1.8" 
+    />
+    <circle 
+      cx="50" 
+      cy="50" 
+      r="33" 
+      fill="none" 
+      stroke="url(#darkGoldGrad)" 
+      strokeWidth="1" 
+      strokeDasharray="2,2" 
+    />
+    <circle 
+      cx="50" 
+      cy="50" 
+      r="30" 
+      fill="none" 
+      stroke="url(#darkGoldGrad)" 
+      strokeWidth="1" 
+    />
+
+    {/* Middle Banner/Ribbon */}
+    {/* Banner background box */}
+    <rect 
+      x="12" 
+      y="38" 
+      width="76" 
+      height="24" 
+      rx="3" 
+      ry="3" 
+      fill="url(#goldGrad)" 
+      stroke="url(#darkGoldGrad)" 
+      strokeWidth="1.8" 
+    />
+    
+    {/* Horizontal lines inside the banner border */}
+    <line x1="16" y1="42" x2="84" y2="42" stroke="url(#darkGoldGrad)" strokeWidth="0.8" />
+    <line x1="16" y1="58" x2="84" y2="58" stroke="url(#darkGoldGrad)" strokeWidth="0.8" />
+
+    {/* Banner fold creases on left & right sides */}
+    <line x1="16" y1="38" x2="16" y2="62" stroke="url(#darkGoldGrad)" strokeWidth="1" />
+    <line x1="84" y1="38" x2="84" y2="62" stroke="url(#darkGoldGrad)" strokeWidth="1" />
+
+    {/* "MTC" text inside the banner */}
+    <text 
+      x="50" 
+      y="55" 
+      textAnchor="middle" 
+      fill="url(#darkGoldGrad)" 
+      fontSize="13" 
+      fontWeight="900" 
+      fontFamily="system-ui, -apple-system, sans-serif" 
+      letterSpacing="1.2"
+    >
+      MTC
+    </text>
+  </svg>
+);
+
 interface PassCardProps {
   pass: MtcPass;
   onRenewClick: () => void;
@@ -64,11 +164,9 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
 
         {/* TOP SECTION: MTC circle and Pass Info */}
         <div className="flex flex-col items-center justify-center z-10 w-full text-center relative" id="pass-header-section">
-          {/* MTC Double Circular Logo - Absolutely positioned to the left within card padding bounds */}
-          <div className="absolute left-0 top-0 flex items-center justify-center border-[2px] border-white/60 rounded-full p-[3px]" id="mtc-logo-outer">
-            <div className="w-12 h-12 rounded-full border border-white/30 flex items-center justify-center bg-white/10 backdrop-blur-sm shadow-inner">
-              <span className="font-display font-bold text-white text-sm tracking-wider">MTC</span>
-            </div>
+          {/* MTC Golden Emblem Logo - Absolutely positioned to the left */}
+          <div className="absolute left-[-4px] top-[-10px] z-10" id="mtc-logo-outer">
+            <MtcLogoSvg />
           </div>
 
           {/* Pass Number and Subtitles Centered */}
@@ -123,11 +221,6 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
 
             {/* Subtle watermark overlay on user photo */}
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 via-transparent to-transparent pointer-events-none" />
-            
-            {/* Real-time mini overlay info inside photo frame */}
-            <div className="absolute bottom-1 right-1 bg-white/90 backdrop-blur-[1px] px-1 py-0.5 rounded text-[6px] font-mono font-bold text-slate-800 border border-slate-200">
-              MTC {pass.passNo.slice(-4)}
-            </div>
           </button>
 
           {/* Large Price Display */}
@@ -224,25 +317,14 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
         }}
       />
 
-      {/* Action Buttons Row */}
-      <div className="w-full max-w-[380px] flex gap-3 mt-1" id="pass-actions-row">
-        <button
-          onClick={onRenewClick}
-          className="flex-1 bg-[#222222] hover:bg-[#333333] active:bg-[#111111] text-white font-semibold text-sm py-3.5 px-4 rounded-xl text-center shadow-md active:scale-[0.98] transition-all border border-neutral-800"
-          id="renew-pass-button"
-        >
-          Renew Pass
-        </button>
-
-        <button
-          onClick={() => document.getElementById('pass-direct-file-input')?.click()}
-          className="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 active:scale-[0.98] text-slate-950 font-bold text-sm py-3.5 px-4 rounded-xl text-center shadow-md transition-all flex items-center justify-center gap-1.5"
-          id="direct-upload-button"
-        >
-          <Upload className="w-4 h-4 text-slate-950 stroke-[2.5]" />
-          Upload Photo
-        </button>
-      </div>
+      {/* Renew Button */}
+      <button
+        onClick={onRenewClick}
+        className="w-full max-w-[380px] bg-[#222222] hover:bg-[#333333] active:bg-[#111111] text-white font-semibold text-base py-3.5 px-6 rounded-2xl text-center shadow-lg active:scale-[0.98] transition-all border border-neutral-800"
+        id="renew-pass-button"
+      >
+        Renew Pass
+      </button>
 
       {/* Full screen blurred QR Modal */}
       <AnimatePresence>
