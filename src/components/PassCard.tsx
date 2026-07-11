@@ -253,15 +253,25 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
             <span className="text-xs font-mono font-bold text-slate-800 tracking-tight mt-0.5">{formatTime(liveTime)}</span>
           </div>
 
-          {/* Glossy Active Badge (Center overlapping) */}
+          {/* Authentic Pass Activated Badge (Designed to match the user's image exactly) */}
           <div 
-            className="absolute left-1/2 -translate-x-1/2 bottom-12 bg-gradient-to-r from-[#1d63ed] to-[#0a48cb] text-white px-5 py-2.5 rounded-[20px] shadow-lg flex flex-col items-center justify-center border border-blue-400/30 scale-105 active:scale-95 transition-transform"
+            className="absolute left-1/2 -translate-x-1/2 bottom-11 bg-[#0052cc] text-white px-4 py-2 rounded-[22px] shadow-xl border-[3px] border-white flex items-center justify-between gap-3 min-w-[155px] scale-105 active:scale-95 transition-transform select-none z-20"
             id="activation-pill-badge"
           >
-            <span className="text-[9px] font-medium tracking-wide uppercase text-blue-100 leading-none">Pass</span>
-            <div className="flex items-baseline gap-1 mt-0.5 leading-none">
-              <span className="text-sm font-extrabold tracking-wider">Activated!</span>
-              <span className="text-lg font-black font-display italic text-[#72f5ff]">1</span>
+            {/* Left Column: Pass Activated Text */}
+            <div className="flex flex-col items-start leading-[1.1] text-left">
+              <span className="text-[12px] font-black uppercase text-white tracking-wide">Pass</span>
+              <span className="text-[16px] font-extrabold text-white tracking-tight">Activated!</span>
+            </div>
+            
+            {/* Right Column: Custom Green/Lime Circular Emblem with Italic 1 */}
+            <div className="relative w-9 h-9 rounded-full bg-[#a3d43c] flex items-center justify-center flex-shrink-0">
+              {/* Outer stroke detail */}
+              <div className="absolute inset-0.5 rounded-full border border-white/20" />
+              {/* Giant bold italic number 1 */}
+              <span className="text-[22px] font-black italic text-[#0052cc] font-sans leading-none -mt-0.5">
+                1
+              </span>
             </div>
           </div>
 
