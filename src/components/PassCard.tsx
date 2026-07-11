@@ -171,8 +171,8 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
 
           {/* Pass Number and Subtitles Centered */}
           <div className="text-center flex flex-col items-center justify-center">
-            <h3 className="font-mono font-bold text-slate-900 text-lg md:text-xl tracking-wide flex items-center justify-center gap-1.5" id="pass-number-text">
-              PASS NO: <span className="text-slate-950 font-sans tracking-tight">{pass.passNo}</span>
+            <h3 className="font-sans font-bold text-slate-900 text-lg md:text-xl tracking-wide flex items-center justify-center gap-1.5" id="pass-number-text">
+              PASS NO: <span className="text-slate-950 font-mono tracking-tight">{pass.passNo}</span>
             </h3>
             {/* Tamil Description */}
             <p className="text-[10px] md:text-[11px] font-sans font-medium text-slate-900 mt-1 max-w-[220px] leading-tight text-center opacity-90">
@@ -182,7 +182,7 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
         </div>
 
         {/* MIDDLE SECTION: White Card Frame */}
-        <div className="relative bg-ivory-sand rounded-[32px] p-3 flex flex-col items-center justify-between shadow-xl border border-white/80 z-10 w-[54%] max-w-[210px] h-[54%] mx-auto my-3 flex-shrink-0" id="pass-white-inner-card">
+        <div className="relative bg-white rounded-[32px] p-3 flex flex-col items-center justify-between shadow-xl border border-white/80 z-10 w-[54%] max-w-[210px] h-[54%] mx-auto my-3 flex-shrink-0" id="pass-white-inner-card">
           
           {/* Golden Badge Seal overlapping the right-middle boundary */}
           <div className="absolute -right-8 top-12 z-20 w-16 h-16 rounded-full bg-gradient-to-br from-[#ffe074] via-[#dbb030] to-[#ad8010] shadow-md border-2 border-white/90 flex flex-col items-center justify-center select-none" id="pass-golden-seal">
@@ -194,7 +194,7 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
                 <svg viewBox="0 0 24 24" className="w-5 h-5 text-amber-950 stroke-[3.5] fill-none mt-0.5">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
-                <span className="text-[6px] font-bold text-amber-950 uppercase tracking-tighter leading-none mt-0.5 font-sans">₹1000</span>
+                <span className="text-[6px] font-bold text-amber-950 uppercase tracking-tighter leading-none mt-0.5 font-mono">₹1000</span>
               </div>
             </div>
           </div>
@@ -215,7 +215,7 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
             />
             {/* Hover Camera Icon Indicator overlay */}
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center gap-1 transition-opacity">
-              <Camera className="w-5 h-5 text-[#C9A227]" />
+              <Camera className="w-5 h-5 text-amber-400" />
               <span className="text-[7px] text-white font-bold uppercase tracking-wider">Change</span>
             </div>
 
@@ -225,20 +225,20 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
 
           {/* Large Price Display */}
           <div className="text-center mt-2" id="pass-amount-display">
-            <span className="text-2xl font-extrabold text-charcoal font-sans tracking-tight">
+            <span className="text-2xl font-bold text-[#111c38] font-mono tracking-tight">
               ₹{pass.amount}
             </span>
           </div>
 
           {/* Dashed Line */}
-          <div className="w-full border-t border-dashed border-warm-gray/30 my-2" />
+          <div className="w-full border-t border-dashed border-slate-300 my-2" />
 
           {/* Validation Info */}
           <div className="text-center pb-1" id="pass-valid-duration">
-            <p className="text-[9px] font-display font-bold tracking-widest text-warm-gray">
+            <p className="text-[9px] font-sans font-bold tracking-widest text-slate-400">
               VALID FOR
             </p>
-            <p className="text-xl font-extrabold text-charcoal mt-0.5 whitespace-nowrap">
+            <p className="text-xl font-bold text-[#111c38] mt-0.5 whitespace-nowrap font-mono">
               {pass.validTo}
             </p>
           </div>
@@ -248,9 +248,9 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
         <div className="flex justify-between items-end z-10 w-full mt-2">
           
           {/* Monospace Clock / Timestamp Badge (Left) */}
-          <div className="bg-ivory-sand rounded-2xl px-3 py-1.5 shadow-md flex flex-col items-center justify-center min-w-[100px] border border-warm-gray/25" id="activation-clock-badge">
-            <span className="text-[10px] font-bold text-warm-gray uppercase tracking-wider">{formatMonthDay(liveTime)}</span>
-            <span className="text-xs font-mono font-bold text-charcoal tracking-tight mt-0.5">{formatTime(liveTime)}</span>
+          <div className="bg-white rounded-2xl px-3 py-1.5 shadow-md flex flex-col items-center justify-center min-w-[100px] border border-slate-200" id="activation-clock-badge">
+            <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">{formatMonthDay(liveTime)}</span>
+            <span className="text-xs font-mono font-bold text-slate-800 tracking-tight mt-0.5">{formatTime(liveTime)}</span>
           </div>
 
           {/* Authentic Pass Activated Badge (Designed to match the user's image exactly) */}
@@ -269,7 +269,7 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
               {/* Outer stroke detail */}
               <div className="absolute inset-0.5 rounded-full border border-white/20" />
               {/* Giant bold italic number 1 */}
-              <span className="text-[22px] font-black italic text-[#0052cc] font-sans leading-none -mt-0.5">
+              <span className="text-[22px] font-black italic text-[#0052cc] font-mono leading-none -mt-0.5">
                 1
               </span>
             </div>
@@ -278,7 +278,7 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
           {/* Mini matrix grid validator icon / Block Symbol (Right) */}
           <button 
             onClick={() => setIsQrZoomed(true)}
-            className="bg-ivory-sand rounded-xl p-1 shadow-md border border-warm-gray/25 w-11 h-11 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform cursor-pointer overflow-hidden" 
+            className="bg-white rounded-xl p-1 shadow-md border border-slate-200 w-11 h-11 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform cursor-pointer overflow-hidden" 
             id="validation-matrix-badge"
             title="Tap to verify/zoom QR Code"
           >
@@ -295,7 +295,7 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
         <div className="text-center w-full z-10 pt-1.5 pb-0.5">
           <button 
             onClick={() => alert("Terms & Conditions:\n1. This MTC Pass is strictly non-transferable.\n2. Must be produced along with valid Government Issued ID on demand.\n3. Valid only inside Metropolitan Transport Corporation (Chennai) limits.\n4. Tampering with visual/digital elements voids verification.")}
-            className="text-[10px] font-bold text-kumkum-maroon underline hover:text-kumkum-maroon/85 active:scale-95 transition-all outline-none"
+            className="text-[10px] font-bold text-amber-950 underline hover:text-amber-900 active:scale-95 transition-all outline-none"
           >
             Terms & Conditions
           </button>
@@ -330,7 +330,7 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
       {/* Renew Button */}
       <button
         onClick={onRenewClick}
-        className="w-full max-w-[380px] bg-kumkum-maroon hover:bg-kumkum-maroon/90 active:bg-kumkum-maroon/95 text-white font-semibold text-base py-3.5 px-6 rounded-2xl text-center shadow-lg active:scale-[0.98] transition-all border-none"
+        className="w-full max-w-[380px] bg-[#222222] hover:bg-[#333333] active:bg-[#111111] text-white font-semibold text-base py-3.5 px-6 rounded-2xl text-center shadow-lg active:scale-[0.98] transition-all border border-neutral-800"
         id="renew-pass-button"
       >
         Renew Pass
@@ -344,7 +344,7 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsQrZoomed(false)}
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 bg-deep-teal/95 backdrop-blur-xl cursor-pointer"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xl cursor-pointer"
           >
             <motion.div
               initial={{ scale: 0.9, y: 20 }}
@@ -352,7 +352,7 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
               exit={{ scale: 0.9, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative bg-ivory-sand text-charcoal rounded-[32px] p-6 max-w-[340px] w-full shadow-2xl flex flex-col items-center border border-warm-gray/20"
+              className="relative bg-white text-slate-900 rounded-[32px] p-6 max-w-[340px] w-full shadow-2xl flex flex-col items-center border border-slate-200"
             >
               {/* Subtle decorative dot pattern */}
               <div 
@@ -365,15 +365,15 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
 
               {/* Modal Header */}
               <div className="text-center mb-5 w-full">
-                <div className="flex items-center justify-center gap-1.5 text-kumkum-maroon font-bold text-sm uppercase tracking-wider mb-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-temple-gold animate-pulse" />
+                <div className="flex items-center justify-center gap-1.5 text-[#111c38] font-bold text-sm uppercase tracking-wider mb-1">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                   MTC Live Verifier
                 </div>
-                <p className="text-[11px] text-warm-gray font-medium">Scan this code to verify Monthly Pass authenticity</p>
+                <p className="text-[11px] text-slate-500 font-medium">Scan this code to verify Monthly Pass authenticity</p>
               </div>
 
               {/* Large High-Res QR Code */}
-              <div className="relative bg-white p-4 rounded-2xl border border-warm-gray/15 shadow-inner w-[240px] h-[240px] flex items-center justify-center">
+              <div className="relative bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-inner w-[240px] h-[240px] flex items-center justify-center">
                 <img 
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(`MTC-PASS-VERIFIED\nNo: ${pass.passNo}\nName: ${pass.name}\nType: ${pass.type}\nValid To: ${pass.validTo}\nVerified At: ${formatMonthDay(liveTime)} ${formatTime(liveTime)}`)}`}
                   alt="MTC Pass QR Code" 
@@ -383,33 +383,33 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
               </div>
 
               {/* Details List */}
-              <div className="w-full mt-5 space-y-2 text-xs border-t border-warm-gray/15 pt-4">
+              <div className="w-full mt-5 space-y-2 text-xs border-t border-slate-100 pt-4">
                 <div className="flex justify-between">
-                  <span className="text-warm-gray font-semibold uppercase tracking-wider text-[10px]">PASS NUMBER</span>
-                  <span className="text-charcoal font-bold font-mono">{pass.passNo}</span>
+                  <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">PASS NUMBER</span>
+                  <span className="text-slate-900 font-bold font-mono">{pass.passNo}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-warm-gray font-semibold uppercase tracking-wider text-[10px]">PASS HOLDER</span>
-                  <span className="text-charcoal font-bold">{pass.name}</span>
+                  <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">PASS HOLDER</span>
+                  <span className="text-slate-900 font-bold">{pass.name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-warm-gray font-semibold uppercase tracking-wider text-[10px]">PASS TYPE</span>
-                  <span className="text-kumkum-maroon font-bold">{pass.type} Monthly Pass</span>
+                  <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">PASS TYPE</span>
+                  <span className="text-[#1d63ed] font-bold">{pass.type} Monthly Pass</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-warm-gray font-semibold uppercase tracking-wider text-[10px]">VALID UNTIL</span>
-                  <span className="text-charcoal font-extrabold text-temple-gold">{pass.validTo}</span>
+                  <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">VALID UNTIL</span>
+                  <span className="text-slate-900 font-bold text-amber-600 font-mono">{pass.validTo}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-warm-gray font-semibold uppercase tracking-wider text-[10px]">VERIFIED AT</span>
-                  <span className="text-warm-gray font-mono text-[10px]">{formatMonthDay(liveTime)} {formatTime(liveTime)}</span>
+                  <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">VERIFIED AT</span>
+                  <span className="text-slate-600 font-mono text-[10px]">{formatMonthDay(liveTime)} {formatTime(liveTime)}</span>
                 </div>
               </div>
 
               {/* Close Button */}
               <button 
                 onClick={() => setIsQrZoomed(false)}
-                className="mt-6 w-full py-3 bg-kumkum-maroon hover:bg-kumkum-maroon/90 text-white font-bold text-sm rounded-2xl transition-all shadow-md active:scale-95 border-none"
+                className="mt-6 w-full py-3 bg-[#111c38] hover:bg-[#1a2d58] text-white font-bold text-sm rounded-2xl transition-all shadow-md active:scale-95"
               >
                 Close Verifier
               </button>
