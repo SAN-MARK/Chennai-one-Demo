@@ -124,10 +124,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 font-sans flex flex-col items-center justify-center p-0 md:p-6 select-none overflow-hidden" id="mtc-root-canvas">
+    <div className="min-h-screen bg-[#0b2423] font-sans flex flex-col items-center justify-center p-0 md:p-6 select-none overflow-hidden" id="mtc-root-canvas">
       
       {/* Background radial art for desktop framing layout */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(243,202,82,0.04)_0%,_transparent_60%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(201,162,39,0.06)_0%,_transparent_60%)] pointer-events-none" />
 
       {/* Main Responsive Grid layout (Desktop sidebar + Centered mobile canvas frame) */}
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center z-10" id="main-grid-frame">
@@ -136,54 +136,54 @@ export default function App() {
         <div className="hidden lg:flex lg:col-span-4 flex-col space-y-5 pr-4 animate-[fadeIn_0.5s_ease]" id="desktop-control-deck">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="text-xs bg-amber-500/15 text-amber-400 font-extrabold px-2.5 py-1 rounded-full border border-amber-500/30">
+              <span className="text-xs bg-temple-gold/15 text-temple-gold font-extrabold px-2.5 py-1 rounded-full border border-temple-gold/30">
                 Simulation Mode
               </span>
-              <span className="text-xs bg-slate-800 text-slate-300 font-bold px-2 py-1 rounded-full">
-                Classic Slate Theme
+              <span className="text-xs bg-kumkum-maroon/20 text-white font-bold px-2 py-1 rounded-full border border-kumkum-maroon/30">
+                Temple & Coastal Theme
               </span>
             </div>
             <h1 className="text-3xl font-display font-black text-white leading-tight">
               MTC Chennai <br />Pass Simulator
             </h1>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-300 leading-relaxed">
               Experience Chennai's digital transit grid interface. Fully interactive simulation of monthly passes, GPS bus maps, ticket booking, and Hub Operator privileges with strict masking controls.
             </p>
           </div>
 
           {/* Quick Simulation controls widget */}
-          <div className="bg-slate-900/80 rounded-2xl p-4 border border-slate-800 space-y-3">
+          <div className="bg-[#0F3D3B]/40 rounded-2xl p-4 border border-deep-teal/30 space-y-3">
             <h3 className="text-xs font-bold text-slate-200 flex items-center gap-1.5 uppercase tracking-wider">
-              <Sliders className="w-4 h-4 text-amber-500" />
+              <Sliders className="w-4 h-4 text-temple-gold" />
               Developer Controls
             </h3>
             
             <div className="grid grid-cols-2 gap-2">
               <button 
                 onClick={() => setShowConfigurator(true)}
-                className="py-2.5 px-3 rounded-xl bg-slate-950 hover:bg-slate-850 border border-slate-800 text-left transition-all"
+                className="py-2.5 px-3 rounded-xl bg-deep-teal hover:bg-deep-teal/80 border border-temple-gold/20 text-left transition-all cursor-pointer"
               >
-                <span className="text-[9px] text-slate-500 block font-bold uppercase">Pass Body</span>
-                <span className="text-xs text-slate-200 font-bold">Configure Card</span>
+                <span className="text-[9px] text-slate-300 block font-bold uppercase">Pass Body</span>
+                <span className="text-xs text-white font-bold">Configure Card</span>
               </button>
 
               <button 
                 onClick={handleRenewPass}
-                className="py-2.5 px-3 rounded-xl bg-slate-950 hover:bg-slate-850 border border-slate-800 text-left transition-all"
+                className="py-2.5 px-3 rounded-xl bg-deep-teal hover:bg-deep-teal/80 border border-temple-gold/20 text-left transition-all cursor-pointer"
               >
-                <span className="text-[9px] text-slate-500 block font-bold uppercase">Quick Reset</span>
-                <span className="text-xs text-slate-200 font-bold">Renew Pass</span>
+                <span className="text-[9px] text-slate-300 block font-bold uppercase">Quick Reset</span>
+                <span className="text-xs text-white font-bold">Renew Pass</span>
               </button>
             </div>
 
-            <div className="text-[10px] text-slate-500 flex items-center gap-1.5 pt-1">
-              <Database className="w-3.5 h-3.5 text-blue-500" />
+            <div className="text-[10px] text-slate-400 flex items-center gap-1.5 pt-1">
+              <Database className="w-3.5 h-3.5 text-temple-gold" />
               <span>Durable state handled via React Context simulation.</span>
             </div>
           </div>
 
           {/* Footer credentials */}
-          <div className="text-[10px] text-slate-500 space-y-1 font-mono">
+          <div className="text-[10px] text-slate-400 space-y-1 font-mono">
             <p>User Account: {user.email}</p>
             <p>Security Node: ACTIVE (TLS 1.3)</p>
           </div>
@@ -196,23 +196,23 @@ export default function App() {
           id="sandbox-viewport-container"
         >
           <div 
-            className="relative w-full max-w-[480px] h-[100vh] md:h-[840px] bg-slate-950 md:rounded-[48px] overflow-hidden shadow-2xl md:border-8 md:border-slate-800 flex flex-col text-white"
+            className="relative w-full max-w-[480px] h-[100vh] md:h-[840px] bg-deep-teal md:rounded-[48px] overflow-hidden shadow-2xl md:border-8 md:border-deep-teal flex flex-col text-white"
             id="smartphone-bezel-frame"
           >
             {/* Top Smartphone Camera Notch element (Mock Bezel details for realism) */}
-            <div className="absolute top-0 inset-x-0 h-7 bg-slate-950 z-50 flex justify-between items-center px-6 text-xs pointer-events-none select-none">
-              <span className="font-sans font-bold text-slate-400 text-[11px]">{phoneClock}</span>
+            <div className="absolute top-0 inset-x-0 h-7 bg-deep-teal z-50 flex justify-between items-center px-6 text-xs pointer-events-none select-none">
+              <span className="font-sans font-bold text-white/80 text-[11px]">{phoneClock}</span>
               {/* Central Camera pill */}
-              <div className="hidden md:block w-24 h-4 bg-black rounded-full mx-auto border border-neutral-900 absolute left-1/2 -translate-x-1/2 top-1.5" />
-              <div className="flex items-center gap-1.5 text-slate-400">
+              <div className="hidden md:block w-24 h-4 bg-[#0a2928] rounded-full mx-auto border border-white/5 absolute left-1/2 -translate-x-1/2 top-1.5" />
+              <div className="flex items-center gap-1.5 text-white/80">
                 <Wifi className="w-3.5 h-3.5" />
                 <span className="font-mono text-[9px] font-bold">5G</span>
                 <Battery className="w-4 h-4 text-emerald-400 fill-current" />
               </div>
             </div>
 
-            {/* Smart Screen Canvas Body */}
-            <div className="flex-grow flex flex-col pt-7 pb-16 relative overflow-hidden" id="simulated-touch-screen">
+            {/* Smart Screen Canvas Body - Styled in warm Ivory Sand Mode with Charcoal text! */}
+            <div className="flex-grow flex flex-col pt-7 pb-16 relative overflow-hidden bg-ivory-sand text-charcoal" id="simulated-touch-screen">
               
               {/* Dynamic Notification Banner for Renewal Confirmations */}
               <AnimatePresence>
@@ -245,48 +245,48 @@ export default function App() {
                     {/* Welcome Header */}
                     <div className="flex justify-between items-center shrink-0">
                       <div>
-                        <span className="text-[10px] text-amber-500 font-bold uppercase tracking-wider font-mono">Chennai Metro Transit</span>
-                        <h2 className="text-xl font-display font-black text-white mt-0.5">Vanakkom, {user.name.split(' ')[0]}!</h2>
+                        <span className="text-[10px] text-kumkum-maroon font-bold uppercase tracking-wider font-mono">Chennai Metro Transit</span>
+                        <h2 className="text-xl font-display font-black text-charcoal mt-0.5">Vanakkom, {user.name.split(' ')[0]}!</h2>
                       </div>
-                      <div className="p-2 rounded-xl bg-slate-900 border border-slate-850">
-                        <Sparkles className="w-4 h-4 text-amber-400" />
+                      <div className="p-2 rounded-xl bg-white border border-warm-gray/25">
+                        <Sparkles className="w-4 h-4 text-temple-gold" />
                       </div>
                     </div>
 
                     {/* Active Pass overview widget */}
                     <div 
                       onClick={() => setActiveTab('passes')}
-                      className="bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:border-slate-700 cursor-pointer transition-all space-y-3 active:scale-[0.99]"
+                      className="bg-white border-2 border-temple-gold/60 p-4 rounded-2xl hover:border-temple-gold cursor-pointer transition-all space-y-3 active:scale-[0.99] shadow-sm"
                     >
                       <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-mono text-slate-500">ACTIVE BUS PASS</span>
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 uppercase">Activated</span>
+                        <span className="text-[10px] font-mono text-warm-gray">ACTIVE BUS PASS</span>
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-kumkum-maroon/10 text-kumkum-maroon uppercase">Activated</span>
                       </div>
                       
                       <div className="flex justify-between items-end">
                         <div>
-                          <p className="text-lg font-mono font-bold text-slate-100">{pass.passNo}</p>
-                          <p className="text-xs text-slate-400 mt-1">Expiring: {pass.validTo}</p>
+                          <p className="text-lg font-mono font-bold text-charcoal">{pass.passNo}</p>
+                          <p className="text-xs text-warm-gray mt-1">Expiring: {pass.validTo}</p>
                         </div>
-                        <span className="text-xl font-extrabold text-amber-400">₹{pass.amount}</span>
+                        <span className="text-xl font-black text-kumkum-maroon">₹{pass.amount}</span>
                       </div>
                     </div>
 
                     {/* Chennai Route Planner Widget */}
-                    <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-4">
+                    <div className="bg-white border border-warm-gray/25 p-4 rounded-2xl space-y-4 shadow-sm">
                       <div className="flex items-center gap-1.5">
-                        <MapPin className="w-4 h-4 text-amber-400" />
-                        <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider">MTC Route Planner</h3>
+                        <MapPin className="w-4 h-4 text-kumkum-maroon" />
+                        <h3 className="text-xs font-bold text-charcoal uppercase tracking-wider">MTC Route Planner</h3>
                       </div>
 
                       <form onSubmit={handleRouteSearch} className="space-y-3.5">
                         <div className="space-y-2.5">
                           <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-[10px] font-bold">FROM</span>
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-warm-gray text-[10px] font-bold">FROM</span>
                             <select 
                               value={plannerSource} 
                               onChange={(e) => setPlannerSource(e.target.value)}
-                              className="w-full bg-slate-950 border border-slate-850 rounded-xl py-2 pl-14 pr-3 text-xs text-white focus:outline-none"
+                              className="w-full bg-ivory-sand border border-warm-gray/25 rounded-xl py-2.5 pl-14 pr-3 text-xs text-charcoal focus:outline-none"
                             >
                               <option value="Broadway">Broadway</option>
                               <option value="Chennai Central">Chennai Central</option>
@@ -298,11 +298,11 @@ export default function App() {
                           </div>
 
                           <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-[10px] font-bold">TO</span>
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-warm-gray text-[10px] font-bold">TO</span>
                             <select 
                               value={plannerDest} 
                               onChange={(e) => setPlannerDest(e.target.value)}
-                              className="w-full bg-slate-950 border border-slate-850 rounded-xl py-2 pl-14 pr-3 text-xs text-white focus:outline-none"
+                              className="w-full bg-ivory-sand border border-warm-gray/25 rounded-xl py-2.5 pl-14 pr-3 text-xs text-charcoal focus:outline-none"
                             >
                               <option value="Broadway">Broadway</option>
                               <option value="Chennai Central">Chennai Central</option>
@@ -316,33 +316,33 @@ export default function App() {
 
                         <button 
                           type="submit"
-                          className="w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-600 transition-colors flex items-center justify-center gap-1.5 shadow"
+                          className="w-full py-2.5 rounded-xl bg-kumkum-maroon text-white font-bold text-xs hover:bg-kumkum-maroon/90 transition-colors flex items-center justify-center gap-1.5 shadow"
                         >
                           Find Transit Route
                         </button>
                       </form>
 
                       {plannerResult && (
-                        <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-850 text-xs mt-3 animate-[fadeIn_0.2s_ease]">
+                        <div className="bg-ivory-sand p-3.5 rounded-xl border border-warm-gray/25 text-xs mt-3 animate-[fadeIn_0.2s_ease]">
                           {plannerResult.error ? (
-                            <div className="flex gap-2 text-rose-400">
+                            <div className="flex gap-2 text-terracotta">
                               <AlertCircle className="w-4 h-4 shrink-0" />
-                              <p className="leading-relaxed">{plannerResult.error}</p>
+                              <p className="leading-relaxed font-bold">{plannerResult.error}</p>
                             </div>
                           ) : (
                             <div className="space-y-2.5">
                               <div className="flex justify-between items-center">
-                                <span className="font-mono font-bold px-2 py-0.5 rounded bg-slate-900 text-slate-200" style={{ borderLeft: `3px solid ${plannerResult.color}` }}>
+                                <span className="font-mono font-bold px-2 py-0.5 rounded bg-deep-teal text-white border-l-4" style={{ borderLeftColor: plannerResult.color }}>
                                   MTC {plannerResult.routeNo}
                                 </span>
-                                <span className="text-amber-400 font-extrabold text-sm">₹{plannerResult.fare}</span>
+                                <span className="text-kumkum-maroon font-extrabold text-sm">₹{plannerResult.fare}</span>
                               </div>
-                              <p className="text-slate-400 text-[11px] leading-tight">
+                              <p className="text-warm-gray text-[11px] leading-tight">
                                 Runs {plannerResult.source} ➔ {plannerResult.destination} with {plannerResult.stopsCount} intermediate segments. {plannerResult.activeBuses} active buses currently monitored on live GPS grid.
                               </p>
                               <button 
                                 onClick={() => setActiveTab('live')}
-                                className="text-[10px] font-bold text-amber-500 hover:underline flex items-center gap-1"
+                                className="text-[10px] font-bold text-kumkum-maroon hover:underline flex items-center gap-1 cursor-pointer"
                               >
                                 View Live Map Location <ArrowRight className="w-3 h-3" />
                               </button>
@@ -353,9 +353,9 @@ export default function App() {
                     </div>
 
                     {/* MTC Transit Board Advisory News */}
-                    <div className="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl space-y-2 text-xs">
-                      <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Advisory Notice</span>
-                      <p className="text-slate-300 leading-relaxed font-sans text-[11px]">
+                    <div className="bg-marina-blue/10 border border-marina-blue/20 p-4 rounded-2xl space-y-2 text-xs">
+                      <span className="text-[10px] text-marina-blue font-bold uppercase tracking-wider">Advisory Notice</span>
+                      <p className="text-charcoal leading-relaxed font-sans text-[11px]">
                         Festive special buses scheduled to run towards Adyar and Tambaram on weekends. Fares remain subsidized. Please verify identity documents prior to ticket inspections.
                       </p>
                     </div>
@@ -371,29 +371,29 @@ export default function App() {
                   >
                     {/* UPPER CONTROL HEADER */}
                     <div className="flex items-center justify-between pb-4 shrink-0" id="mtc-passes-header">
-                      <h1 className="text-2xl font-display font-black text-white" id="passes-screen-title">Passes</h1>
+                      <h1 className="text-2xl font-display font-black text-charcoal" id="passes-screen-title">Passes</h1>
                       <div className="flex gap-2">
                         {/* Help Button */}
                         <button 
                           onClick={() => setShowHelp(true)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#222222] hover:bg-[#333333] active:scale-95 transition-all text-xs font-bold rounded-full text-white border border-neutral-800"
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-ivory-sand active:scale-95 transition-all text-xs font-bold rounded-full text-charcoal border border-warm-gray/25 cursor-pointer animate-none"
                         >
-                          <Phone className="w-3.5 h-3.5" /> Help
+                          <Phone className="w-3.5 h-3.5 text-kumkum-maroon" /> Help
                         </button>
                         {/* History Button */}
                         <button 
                           onClick={() => setShowHistory(true)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#222222] hover:bg-[#333333] active:scale-95 transition-all text-xs font-bold rounded-full text-white border border-neutral-800"
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-ivory-sand active:scale-95 transition-all text-xs font-bold rounded-full text-charcoal border border-warm-gray/25 cursor-pointer animate-none"
                         >
-                          <Clock className="w-3.5 h-3.5" /> History
+                          <Clock className="w-3.5 h-3.5 text-kumkum-maroon" /> History
                         </button>
                       </div>
                     </div>
 
                     {/* Active Bus route indicator pill */}
                     <div className="self-start mb-4" id="mtc-pill-active-route">
-                      <div className="flex items-center gap-1.5 bg-white text-black px-3.5 py-1.5 rounded-full font-bold text-xs shadow-sm">
-                        <Bus className="w-3.5 h-3.5 text-black fill-current" />
+                      <div className="flex items-center gap-1.5 bg-kumkum-maroon text-white px-3.5 py-1.5 rounded-full font-bold text-xs shadow-md">
+                        <Bus className="w-3.5 h-3.5 text-white fill-current" />
                         <span>Bus(1/1)</span>
                       </div>
                     </div>
@@ -445,14 +445,14 @@ export default function App() {
 
               {/* PERSISTENT STICKY BOTTOM UTILITY NAVIGATION BAR */}
               <div 
-                className="absolute bottom-0 inset-x-0 h-16 bg-[#0a0a0a] border-t border-neutral-900 flex justify-around items-center z-40 select-none"
+                className="absolute bottom-0 inset-x-0 h-16 bg-deep-teal border-t border-white/10 flex justify-around items-center z-40 select-none"
                 id="sticky-bottom-nav"
               >
                 {/* 1. Home button */}
                 <button 
                   onClick={() => setActiveTab('home')}
-                  className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
-                    activeTab === 'home' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                  className={`flex flex-col items-center justify-center w-12 h-12 transition-all cursor-pointer ${
+                    activeTab === 'home' ? 'text-temple-gold scale-105' : 'text-white/60 hover:text-white'
                   }`}
                 >
                   <Home className="w-5 h-5 stroke-[2]" />
@@ -462,15 +462,15 @@ export default function App() {
                 {/* 2. Passes button with numeric notification badge */}
                 <button 
                   onClick={() => setActiveTab('passes')}
-                  className={`relative flex flex-col items-center justify-center w-12 h-12 transition-all ${
-                    activeTab === 'passes' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                  className={`relative flex flex-col items-center justify-center w-12 h-12 transition-all cursor-pointer ${
+                    activeTab === 'passes' ? 'text-temple-gold scale-105' : 'text-white/60 hover:text-white'
                   }`}
                 >
                   <CreditCard className="w-5 h-5 stroke-[2]" />
                   <span className="text-[9px] font-sans font-semibold mt-0.5">Passes</span>
                   
                   {/* Red alert bubble numeric "1" matching screenshot exactly! */}
-                  <div className="absolute top-0.5 right-1.5 bg-[#df3d3d] text-white font-sans text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-black shadow">
+                  <div className="absolute top-0.5 right-1.5 bg-kumkum-maroon text-white font-sans text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white/20 shadow">
                     1
                   </div>
                 </button>
@@ -478,8 +478,8 @@ export default function App() {
                 {/* 3. Live tracking button */}
                 <button 
                   onClick={() => setActiveTab('live')}
-                  className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
-                    activeTab === 'live' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                  className={`flex flex-col items-center justify-center w-12 h-12 transition-all cursor-pointer ${
+                    activeTab === 'live' ? 'text-temple-gold scale-105' : 'text-white/60 hover:text-white'
                   }`}
                 >
                   <Radio className="w-5 h-5 stroke-[2]" />
@@ -489,8 +489,8 @@ export default function App() {
                 {/* 4. Ticket dispenser button */}
                 <button 
                   onClick={() => setActiveTab('ticket')}
-                  className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
-                    activeTab === 'ticket' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                  className={`flex flex-col items-center justify-center w-12 h-12 transition-all cursor-pointer ${
+                    activeTab === 'ticket' ? 'text-temple-gold scale-105' : 'text-white/60 hover:text-white'
                   }`}
                 >
                   <Ticket className="w-5 h-5 stroke-[2]" />
@@ -500,8 +500,8 @@ export default function App() {
                 {/* 5. Profile setup button */}
                 <button 
                   onClick={() => setActiveTab('profile')}
-                  className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
-                    activeTab === 'profile' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                  className={`flex flex-col items-center justify-center w-12 h-12 transition-all cursor-pointer ${
+                    activeTab === 'profile' ? 'text-temple-gold scale-105' : 'text-white/60 hover:text-white'
                   }`}
                 >
                   <User className="w-5 h-5 stroke-[2]" />
