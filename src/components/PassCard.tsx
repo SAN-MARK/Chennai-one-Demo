@@ -182,19 +182,19 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
         </div>
 
         {/* MIDDLE SECTION: White Card Frame */}
-        <div className="relative bg-white rounded-[28px] p-2.5 flex flex-col items-center justify-between shadow-xl border border-white/80 z-10 w-[50%] max-w-[195px] h-[48%] mx-auto my-2.5 flex-shrink-0" id="pass-white-inner-card">
+        <div className="relative bg-white rounded-[32px] p-3 flex flex-col items-center justify-between shadow-xl border border-white/80 z-10 w-[54%] max-w-[210px] h-[54%] mx-auto my-3 flex-shrink-0" id="pass-white-inner-card">
           
           {/* Golden Badge Seal overlapping the right-middle boundary */}
-          <div className="absolute -right-7 top-10 z-20 w-14 h-14 rounded-full bg-gradient-to-br from-[#ffe074] via-[#dbb030] to-[#ad8010] shadow-md border-2 border-white/90 flex flex-col items-center justify-center select-none" id="pass-golden-seal">
+          <div className="absolute -right-8 top-12 z-20 w-16 h-16 rounded-full bg-gradient-to-br from-[#ffe074] via-[#dbb030] to-[#ad8010] shadow-md border-2 border-white/90 flex flex-col items-center justify-center select-none" id="pass-golden-seal">
             {/* Concentric subtle inner ring */}
             <div className="absolute inset-0.5 rounded-full border border-white/30 flex items-center justify-center">
               <div className="absolute inset-1 rounded-full border border-amber-600/30 flex flex-col items-center justify-center p-0.5">
-                <span className="text-[5px] font-bold text-amber-950 uppercase tracking-tighter leading-none font-sans">Monthly</span>
+                <span className="text-[6px] font-bold text-amber-950 uppercase tracking-tighter leading-none font-sans">Monthly</span>
                 {/* Tick Checkmark Icon */}
-                <svg viewBox="0 0 24 24" className="w-4 h-4 text-amber-950 stroke-[3.5] fill-none mt-0.5">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 text-amber-950 stroke-[3.5] fill-none mt-0.5">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
-                <span className="text-[5px] font-bold text-amber-950 uppercase tracking-tighter leading-none mt-0.5 font-sans">₹1000</span>
+                <span className="text-[6px] font-bold text-amber-950 uppercase tracking-tighter leading-none mt-0.5 font-sans">₹1000</span>
               </div>
             </div>
           </div>
@@ -203,7 +203,7 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
           <button 
             type="button"
             onClick={() => document.getElementById('pass-direct-file-input')?.click()}
-            className="relative w-[88px] h-[88px] rounded-2xl overflow-hidden shadow-md border-2 border-[#ecd695] bg-slate-50 flex items-center justify-center group flex-shrink-0 cursor-pointer hover:scale-105 active:scale-95 transition-transform outline-none"
+            className="relative w-[110px] h-[110px] rounded-2xl overflow-hidden shadow-md border-[3px] border-[#ecd695] bg-slate-50 flex items-center justify-center group flex-shrink-0 cursor-pointer hover:scale-105 active:scale-95 transition-transform outline-none"
             title="Click to upload custom photo from device"
           >
             {/* Embedded profile image */}
@@ -224,21 +224,21 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
           </button>
 
           {/* Large Price Display */}
-          <div className="text-center mt-1" id="pass-amount-display">
-            <span className="text-xl font-extrabold text-[#111c38] font-sans tracking-tight">
+          <div className="text-center mt-2" id="pass-amount-display">
+            <span className="text-2xl font-extrabold text-[#111c38] font-sans tracking-tight">
               ₹{pass.amount}
             </span>
           </div>
 
           {/* Dashed Line */}
-          <div className="w-full border-t border-dashed border-slate-300 my-1" />
+          <div className="w-full border-t border-dashed border-slate-300 my-2" />
 
           {/* Validation Info */}
           <div className="text-center pb-1" id="pass-valid-duration">
-            <p className="text-[8px] font-display font-bold tracking-widest text-slate-400">
+            <p className="text-[9px] font-display font-bold tracking-widest text-slate-400">
               VALID FOR
             </p>
-            <p className="text-lg font-extrabold text-[#111c38] mt-0.5 whitespace-nowrap">
+            <p className="text-xl font-extrabold text-[#111c38] mt-0.5 whitespace-nowrap">
               {pass.validTo}
             </p>
           </div>
