@@ -63,21 +63,21 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_5s_infinite] pointer-events-none" />
 
         {/* TOP SECTION: MTC circle and Pass Info */}
-        <div className="flex justify-between items-start z-10 w-full">
-          {/* MTC Double Circular Logo */}
-          <div className="flex items-center justify-center border-[2px] border-white/60 rounded-full p-[3px]" id="mtc-logo-outer">
-            <div className="w-14 h-14 rounded-full border border-white/30 flex items-center justify-center bg-white/10 backdrop-blur-sm shadow-inner">
-              <span className="font-display font-bold text-white text-base tracking-wider">MTC</span>
+        <div className="flex flex-col items-center justify-center z-10 w-full text-center relative" id="pass-header-section">
+          {/* MTC Double Circular Logo - Absolutely positioned to the left within card padding bounds */}
+          <div className="absolute left-0 top-0 flex items-center justify-center border-[2px] border-white/60 rounded-full p-[3px]" id="mtc-logo-outer">
+            <div className="w-12 h-12 rounded-full border border-white/30 flex items-center justify-center bg-white/10 backdrop-blur-sm shadow-inner">
+              <span className="font-display font-bold text-white text-sm tracking-wider">MTC</span>
             </div>
           </div>
 
-          {/* Pass Number and Subtitles */}
-          <div className="text-right flex flex-col items-end">
-            <h3 className="font-mono font-bold text-slate-900 text-lg md:text-xl tracking-wide flex items-center gap-1.5" id="pass-number-text">
+          {/* Pass Number and Subtitles Centered */}
+          <div className="text-center flex flex-col items-center justify-center">
+            <h3 className="font-mono font-bold text-slate-900 text-lg md:text-xl tracking-wide flex items-center justify-center gap-1.5" id="pass-number-text">
               PASS NO: <span className="text-slate-950 font-sans tracking-tight">{pass.passNo}</span>
             </h3>
             {/* Tamil Description */}
-            <p className="text-[10px] md:text-[11px] font-sans font-medium text-slate-900 mt-1 max-w-[200px] leading-tight text-right opacity-90">
+            <p className="text-[10px] md:text-[11px] font-sans font-medium text-slate-900 mt-1 max-w-[220px] leading-tight text-center opacity-90">
               விருப்பம் போல் பயணம் செய்ய மாதச்சலுகை சீட்டு
             </p>
           </div>
