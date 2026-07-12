@@ -425,7 +425,12 @@ export default function App() {
                   </AnimatePresence>
 
                   {/* MAIN SCROLL ZONE (TOUCH OPTIMIZED CONTAINER) */}
-                  <div className="flex-grow overflow-y-auto no-scrollbar p-5 flex flex-col justify-start" id="active-screen-scroll-container">
+                  <div 
+                    className={`flex-grow overflow-y-auto no-scrollbar p-5 flex flex-col justify-start transition-colors duration-200 ${
+                      activeTab === 'passes' ? 'bg-slate-950 text-white' : 'bg-[#f8f9fa] text-slate-800'
+                    }`} 
+                    id="active-screen-scroll-container"
+                  >
                     
                     {/* 1. HOME SCREEN TAB */}
                     {activeTab === 'home' && (
@@ -437,48 +442,48 @@ export default function App() {
                         {/* Welcome Header */}
                         <div className="flex justify-between items-center shrink-0">
                           <div>
-                            <span className="text-[10px] text-amber-500 font-bold uppercase tracking-wider font-mono">Chennai Metro Transit</span>
-                            <h2 className="text-xl font-display font-black text-white mt-0.5">Vanakkom, {user.name.split(' ')[0]}!</h2>
+                            <span className="text-[10px] text-red-500 font-extrabold uppercase tracking-wider font-sans">Chennai Metro Transit</span>
+                            <h2 className="text-xl font-display font-black text-slate-950 mt-0.5">Vanakkom, {user.name.split(' ')[0]}!</h2>
                           </div>
-                          <div className="p-2 rounded-xl bg-slate-900 border border-slate-850">
-                            <Sparkles className="w-4 h-4 text-amber-400" />
+                          <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-xs">
+                            <Sparkles className="w-4 h-4 text-red-500" />
                           </div>
                         </div>
 
                         {/* Active Pass overview widget */}
                         <div 
                           onClick={() => setActiveTab('passes')}
-                          className="bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:border-slate-700 cursor-pointer transition-all space-y-3 active:scale-[0.99]"
+                          className="bg-white border border-slate-100 shadow-sm p-4 rounded-3xl hover:border-slate-200 cursor-pointer transition-all space-y-3 active:scale-[0.99]"
                         >
                           <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-mono text-slate-500">ACTIVE BUS PASS</span>
-                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 uppercase">Activated</span>
+                            <span className="text-[10px] font-mono text-slate-500 font-bold uppercase">Active Bus Pass</span>
+                            <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase">Activated</span>
                           </div>
                           
                           <div className="flex justify-between items-end">
                             <div>
-                              <p className="text-lg font-mono font-bold text-slate-100">{pass.passNo}</p>
-                              <p className="text-xs text-slate-400 mt-1">Expiring: {pass.validTo}</p>
+                              <p className="text-lg font-mono font-bold text-slate-900">{pass.passNo}</p>
+                              <p className="text-xs text-slate-500 mt-1">Expiring: {pass.validTo}</p>
                             </div>
-                            <span className="text-xl font-extrabold text-amber-400">₹{pass.amount}</span>
+                            <span className="text-xl font-extrabold text-[#ff0055]">₹{pass.amount}</span>
                           </div>
                         </div>
 
                         {/* Chennai Route Planner Widget */}
-                        <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-4">
+                        <div className="bg-white border border-slate-100 shadow-sm p-4 rounded-3xl space-y-4">
                           <div className="flex items-center gap-1.5">
-                            <MapPin className="w-4 h-4 text-amber-400" />
-                            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider">MTC Route Planner</h3>
+                            <MapPin className="w-4 h-4 text-red-500" />
+                            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">MTC Route Planner</h3>
                           </div>
 
                           <form onSubmit={handleRouteSearch} className="space-y-3.5">
                             <div className="space-y-2.5">
                               <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-[10px] font-bold">FROM</span>
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">FROM</span>
                                 <select 
                                   value={plannerSource} 
                                   onChange={(e) => setPlannerSource(e.target.value)}
-                                  className="w-full bg-slate-950 border border-slate-850 rounded-xl py-2 pl-14 pr-3 text-xs text-white focus:outline-none"
+                                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-14 pr-3 text-xs text-slate-800 focus:outline-none focus:border-red-500"
                                 >
                                   <option value="Broadway">Broadway</option>
                                   <option value="Chennai Central">Chennai Central</option>
@@ -490,11 +495,11 @@ export default function App() {
                               </div>
 
                               <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-[10px] font-bold">TO</span>
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">TO</span>
                                 <select 
                                   value={plannerDest} 
                                   onChange={(e) => setPlannerDest(e.target.value)}
-                                  className="w-full bg-slate-950 border border-slate-850 rounded-xl py-2 pl-14 pr-3 text-xs text-white focus:outline-none"
+                                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-14 pr-3 text-xs text-slate-800 focus:outline-none focus:border-red-500"
                                 >
                                   <option value="Broadway">Broadway</option>
                                   <option value="Chennai Central">Chennai Central</option>
@@ -508,33 +513,33 @@ export default function App() {
 
                             <button 
                               type="submit"
-                              className="w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-600 transition-colors flex items-center justify-center gap-1.5 shadow"
+                              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#ff0a24] to-[#db0060] text-white font-black text-xs hover:opacity-90 transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-98"
                             >
                               Find Transit Route
                             </button>
                           </form>
 
                           {plannerResult && (
-                            <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-850 text-xs mt-3 animate-[fadeIn_0.2s_ease]">
+                            <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs mt-3 animate-[fadeIn_0.2s_ease]">
                               {plannerResult.error ? (
-                                <div className="flex gap-2 text-rose-400">
+                                <div className="flex gap-2 text-rose-600 font-bold">
                                   <AlertCircle className="w-4 h-4 shrink-0" />
                                   <p className="leading-relaxed">{plannerResult.error}</p>
                                 </div>
                               ) : (
                                 <div className="space-y-2.5">
                                   <div className="flex justify-between items-center">
-                                    <span className="font-mono font-bold px-2 py-0.5 rounded bg-slate-900 text-slate-200" style={{ borderLeft: `3px solid ${plannerResult.color}` }}>
+                                    <span className="font-mono font-bold px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-800" style={{ borderLeft: `3px solid ${plannerResult.color}` }}>
                                       MTC {plannerResult.routeNo}
                                     </span>
-                                    <span className="text-amber-400 font-extrabold text-sm">₹{plannerResult.fare}</span>
+                                    <span className="text-[#ff0055] font-black text-sm">₹{plannerResult.fare}</span>
                                   </div>
-                                  <p className="text-slate-400 text-[11px] leading-tight">
+                                  <p className="text-slate-500 text-[11px] leading-tight font-medium">
                                     Runs {plannerResult.source} ➔ {plannerResult.destination} with {plannerResult.stopsCount} intermediate segments. {plannerResult.activeBuses} active buses currently monitored on live GPS grid.
                                   </p>
                                   <button 
                                     onClick={() => setActiveTab('live')}
-                                    className="text-[10px] font-bold text-amber-500 hover:underline flex items-center gap-1"
+                                    className="text-[10px] font-extrabold text-red-500 hover:underline flex items-center gap-1"
                                   >
                                     View Live Map Location <ArrowRight className="w-3 h-3" />
                                   </button>
@@ -545,9 +550,9 @@ export default function App() {
                         </div>
 
                         {/* MTC Transit Board Advisory News */}
-                        <div className="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl space-y-2 text-xs">
-                          <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Advisory Notice</span>
-                          <p className="text-slate-300 leading-relaxed font-sans text-[11px]">
+                        <div className="bg-amber-50 border border-amber-200 p-4 rounded-3xl space-y-2 text-xs">
+                          <span className="text-[10px] text-amber-800 font-black uppercase tracking-wider">Advisory Notice</span>
+                          <p className="text-slate-700 leading-relaxed font-sans text-[11px] font-medium">
                             Festive special buses scheduled to run towards Adyar and Tambaram on weekends. Fares remain subsidized. Please verify identity documents prior to ticket inspections.
                           </p>
                         </div>

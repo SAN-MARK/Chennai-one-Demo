@@ -108,29 +108,29 @@ export default function LiveMap({ onBackToPasses }: LiveMapProps) {
   );
 
   return (
-    <div className="flex flex-col h-full bg-slate-950 text-white font-sans" id="chennai-live-bus-map">
+    <div className="flex flex-col h-full bg-[#f8f9fa] text-slate-800 font-sans" id="chennai-live-bus-map">
       
       {/* Upper control layout */}
-      <div className="p-4 bg-slate-900 border-b border-slate-800 space-y-3">
+      <div className="p-4 bg-white border-b border-slate-200/80 space-y-3 shrink-0">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-display font-bold flex items-center gap-1.5 text-amber-400">
+            <h2 className="text-base font-display font-black flex items-center gap-1.5 text-slate-900">
               <Radio className="w-4 h-4 animate-pulse text-red-500" />
               Live MTC Tracker
             </h2>
-            <p className="text-[11px] text-slate-400"> चेन्नई महानगर परिवहन (Chennai Hub)</p>
+            <p className="text-[10px] text-slate-500 font-semibold uppercase font-sans tracking-wider">MTC Spatial Diagnostics</p>
           </div>
 
           {/* Tile switcher */}
-          <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px] font-bold">
+          <div className="flex bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-[10px] font-bold">
             {(['standard', 'satellite', 'terrain'] as MapMode[]).map((mode) => (
               <button
                 key={mode}
                 onClick={() => setMapMode(mode)}
-                className={`px-2.5 py-1 rounded-md capitalize transition-all ${
+                className={`px-2.5 py-1 rounded-lg capitalize transition-all ${
                   mapMode === mode 
-                    ? 'bg-amber-500 text-slate-950 font-extrabold' 
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-gradient-to-r from-[#ff0a24] to-[#db0060] text-white font-extrabold shadow-xs' 
+                    : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
                 {mode}
@@ -142,13 +142,13 @@ export default function LiveMap({ onBackToPasses }: LiveMapProps) {
         {/* Route filters and Search */}
         <div className="flex gap-2">
           <div className="relative flex-grow">
-            <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search route or stop..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 pl-9 pr-4 text-xs text-white focus:outline-none focus:border-amber-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-red-500"
             />
           </div>
         </div>
@@ -161,13 +161,13 @@ export default function LiveMap({ onBackToPasses }: LiveMapProps) {
               <button
                 key={route.routeNumber}
                 onClick={() => handleRouteToggle(route.routeNumber)}
-                className={`px-3 py-1.5 rounded-full text-[10px] font-mono font-bold flex items-center gap-1.5 border transition-all shrink-0 ${
+                className={`px-3 py-1.5 rounded-full text-[10px] font-mono font-extrabold flex items-center gap-1.5 border transition-all shrink-0 ${
                   isActive 
-                    ? 'bg-slate-800 border-slate-700 text-white' 
-                    : 'bg-slate-950 border-slate-900 text-slate-600'
+                    ? 'bg-slate-850 border-slate-800 text-white shadow-xs' 
+                    : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'
                 }`}
               >
-                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: isActive ? route.color : '#475569' }} />
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: isActive ? route.color : '#94a3b8' }} />
                 Route {route.routeNumber}
               </button>
             );
@@ -178,7 +178,11 @@ export default function LiveMap({ onBackToPasses }: LiveMapProps) {
       {/* MAP CANVAS CONTAINER */}
       <div 
         ref={mapContainerRef} 
-        className="relative flex-grow overflow-hidden select-none bg-slate-950"
+        className={`relative flex-grow overflow-hidden select-none transition-colors duration-500 ${
+          mapMode === 'standard' ? 'bg-[#f1f5f9]' :
+          mapMode === 'satellite' ? 'bg-[#0f172a]' :
+          'bg-[#fafaf9]'
+        }`}
         id="map-canvas-frame"
       >
         {/* Dynamic Map Rendering with SVG */}
@@ -193,9 +197,9 @@ export default function LiveMap({ onBackToPasses }: LiveMapProps) {
           <path 
             d="M 75 0 L 100 0 L 100 100 L 80 100 Q 77 50 75 0 Z" 
             fill={
-              mapMode === 'standard' ? '#0d1f3d' : 
-              mapMode === 'satellite' ? '#031424' : 
-              '#09243a'
+              mapMode === 'standard' ? '#bae6fd' : 
+              mapMode === 'satellite' ? '#083344' : 
+              '#e0f2fe'
             }
             className="transition-colors duration-500"
           />
@@ -204,14 +208,14 @@ export default function LiveMap({ onBackToPasses }: LiveMapProps) {
           {mapMode === 'standard' && (
             <>
               {/* Ground Grid Lines */}
-              <line x1="0" y1="20" x2="100" y2="20" stroke="#1e293b" strokeWidth="0.1" />
-              <line x1="0" y1="40" x2="100" y2="40" stroke="#1e293b" strokeWidth="0.1" />
-              <line x1="0" y1="60" x2="100" y2="60" stroke="#1e293b" strokeWidth="0.1" />
-              <line x1="0" y1="80" x2="100" y2="80" stroke="#1e293b" strokeWidth="0.1" />
-              <line x1="20" y1="0" x2="20" y2="100" stroke="#1e293b" strokeWidth="0.1" />
-              <line x1="40" y1="0" x2="40" y2="100" stroke="#1e293b" strokeWidth="0.1" />
-              <line x1="60" y1="0" x2="60" y2="100" stroke="#1e293b" strokeWidth="0.1" />
-              <line x1="80" y1="0" x2="80" y2="100" stroke="#1e293b" strokeWidth="0.1" />
+              <line x1="0" y1="20" x2="100" y2="20" stroke="#cbd5e1" strokeWidth="0.15" />
+              <line x1="0" y1="40" x2="100" y2="40" stroke="#cbd5e1" strokeWidth="0.15" />
+              <line x1="0" y1="60" x2="100" y2="60" stroke="#cbd5e1" strokeWidth="0.15" />
+              <line x1="0" y1="80" x2="100" y2="80" stroke="#cbd5e1" strokeWidth="0.15" />
+              <line x1="20" y1="0" x2="20" y2="100" stroke="#cbd5e1" strokeWidth="0.15" />
+              <line x1="40" y1="0" x2="40" y2="100" stroke="#cbd5e1" strokeWidth="0.15" />
+              <line x1="60" y1="0" x2="60" y2="100" stroke="#cbd5e1" strokeWidth="0.15" />
+              <line x1="80" y1="0" x2="80" y2="100" stroke="#cbd5e1" strokeWidth="0.15" />
             </>
           )}
 
@@ -232,10 +236,10 @@ export default function LiveMap({ onBackToPasses }: LiveMapProps) {
           {mapMode === 'terrain' && (
             <>
               {/* Topographical concentric contours on left */}
-              <path d="M 5 20 Q 15 15 10 35 Q 8 50 2 55" fill="none" stroke="#475569" strokeWidth="0.15" strokeDasharray="1 1" />
-              <path d="M -2 15 Q 8 10 3 30 Q 0 45 -5 48" fill="none" stroke="#475569" strokeWidth="0.15" strokeDasharray="1 1" />
-              <path d="M 15 70 Q 25 75 22 85 T 10 95" fill="none" stroke="#475569" strokeWidth="0.15" strokeDasharray="1 1" />
-              <path d="M 8 65 Q 18 70 15 80 T 5 90" fill="none" stroke="#475569" strokeWidth="0.1" strokeDasharray="1 1" />
+              <path d="M 5 20 Q 15 15 10 35 Q 8 50 2 55" fill="none" stroke="#cbd5e1" strokeWidth="0.2" strokeDasharray="1 1" />
+              <path d="M -2 15 Q 8 10 3 30 Q 0 45 -5 48" fill="none" stroke="#cbd5e1" strokeWidth="0.2" strokeDasharray="1 1" />
+              <path d="M 15 70 Q 25 75 22 85 T 10 95" fill="none" stroke="#cbd5e1" strokeWidth="0.2" strokeDasharray="1 1" />
+              <path d="M 8 65 Q 18 70 15 80 T 5 90" fill="none" stroke="#cbd5e1" strokeWidth="0.15" strokeDasharray="1 1" />
             </>
           )}
 
@@ -316,7 +320,7 @@ export default function LiveMap({ onBackToPasses }: LiveMapProps) {
           <div
             key={`landmark-lbl-${idx}`}
             style={{ left: `${landmark.x}%`, top: `${landmark.y}%` }}
-            className={`absolute -translate-x-1/2 -translate-y-5 bg-slate-900/90 border border-amber-500/30 text-[8px] font-bold text-amber-400 px-1.5 py-0.5 rounded shadow-sm whitespace-nowrap pointer-events-none transition-opacity ${
+            className={`absolute -translate-x-1/2 -translate-y-5 bg-white border border-amber-300 text-[8px] font-extrabold text-amber-700 px-1.5 py-0.5 rounded shadow-sm whitespace-nowrap pointer-events-none transition-opacity ${
               selectedRoute ? 'opacity-20' : 'opacity-100'
             }`}
           >
@@ -325,9 +329,9 @@ export default function LiveMap({ onBackToPasses }: LiveMapProps) {
         ))}
 
         {/* Floating Water label */}
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 -rotate-90 select-none flex items-center gap-1.5 opacity-40 pointer-events-none">
-          <Waves className="w-3 h-3 text-blue-400" />
-          <span className="text-[10px] font-display font-semibold tracking-widest text-blue-300 uppercase">Bay of Bengal</span>
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 -rotate-90 select-none flex items-center gap-1.5 opacity-60 pointer-events-none">
+          <Waves className="w-3 h-3 text-blue-500" />
+          <span className="text-[10px] font-display font-black tracking-widest text-blue-600 uppercase">Bay of Bengal</span>
         </div>
 
         {/* RENDER ACTIVE BUSES */}
@@ -375,42 +379,42 @@ export default function LiveMap({ onBackToPasses }: LiveMapProps) {
       </div>
 
       {/* FOOTER DETAIL CARD: Displays selected Bus info or selected route details */}
-      <div className="p-4 bg-slate-900 border-t border-slate-800" id="live-map-footer-card">
+      <div className="p-4 bg-white border-t border-slate-200 shrink-0" id="live-map-footer-card">
         {selectedBus ? (
           <div className="space-y-3">
             <div className="flex justify-between items-start">
               <div>
                 <span 
-                  className="text-[10px] font-mono font-bold text-white px-2 py-0.5 rounded-full"
+                  className="text-[10px] font-mono font-extrabold text-white px-2.5 py-0.5 rounded-full"
                   style={{ backgroundColor: CHENNAI_ROUTES.find(r => r.routeNumber === selectedBus.routeNumber)?.color }}
                 >
                   MTC BUS {selectedBus.routeNumber}
                 </span>
-                <h4 className="text-sm font-bold text-white mt-1.5 flex items-center gap-1.5">
-                  <Navigation className="w-3.5 h-3.5 text-amber-400" />
+                <h4 className="text-sm font-black text-slate-800 mt-1.5 flex items-center gap-1.5">
+                  <Navigation className="w-3.5 h-3.5 text-red-500" />
                   Heading {selectedBus.heading}
                 </h4>
               </div>
               <div className="text-right">
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  selectedBus.status === 'On Time' ? 'bg-emerald-500/10 text-emerald-400' :
-                  selectedBus.status === 'Crowded' ? 'bg-amber-500/10 text-amber-400' :
-                  'bg-rose-500/10 text-rose-400'
+                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                  selectedBus.status === 'On Time' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+                  selectedBus.status === 'Crowded' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                  'bg-rose-50 text-rose-700 border border-rose-200'
                 }`}>
                   {selectedBus.status}
                 </span>
-                <p className="text-xs font-mono text-slate-400 mt-1">{selectedBus.speed} km/h</p>
+                <p className="text-xs font-mono font-bold text-slate-500 mt-1">{selectedBus.speed} km/h</p>
               </div>
             </div>
 
-            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800 grid grid-cols-2 gap-3 text-xs">
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 grid grid-cols-2 gap-3 text-xs">
               <div>
-                <span className="text-slate-500 text-[10px] block">Next Stop</span>
-                <span className="text-slate-200 font-semibold">{selectedBus.nextStop}</span>
+                <span className="text-slate-400 text-[10px] font-bold block">Next Stop</span>
+                <span className="text-slate-700 font-bold">{selectedBus.nextStop}</span>
               </div>
               <div>
-                <span className="text-slate-500 text-[10px] block">Operators Route</span>
-                <span className="text-slate-200 font-semibold truncate">
+                <span className="text-slate-400 text-[10px] font-bold block">Operators Route</span>
+                <span className="text-slate-700 font-bold truncate block">
                   {(() => {
                     const r = CHENNAI_ROUTES.find(r => r.routeNumber === selectedBus.routeNumber);
                     return r ? `${r.source} ➔ ${r.destination}` : 'Unknown';
@@ -422,7 +426,7 @@ export default function LiveMap({ onBackToPasses }: LiveMapProps) {
             <div className="flex gap-2">
               <button 
                 onClick={() => setSelectedBus(null)}
-                className="flex-grow py-2 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-300 font-semibold text-xs active:scale-95 transition-all"
+                className="flex-grow py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs active:scale-95 transition-all cursor-pointer"
               >
                 Clear Selection
               </button>
@@ -437,34 +441,34 @@ export default function LiveMap({ onBackToPasses }: LiveMapProps) {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <div>
-                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                      <h4 className="text-sm font-black text-slate-800 flex items-center gap-2">
                         <span className="w-3 h-3 rounded-full" style={{ backgroundColor: route.color }} />
                         Route {route.routeNumber} Details
                       </h4>
-                      <p className="text-xs text-slate-400 mt-0.5">{route.source} ➔ {route.destination}</p>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">{route.source} ➔ {route.destination}</p>
                     </div>
                     <button 
                       onClick={() => setSelectedRoute(null)}
-                      className="text-xs text-amber-500 font-bold hover:underline"
+                      className="text-xs text-red-500 font-extrabold hover:underline"
                     >
                       All Routes
                     </button>
                   </div>
 
                   {/* Route progress dots */}
-                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                    <span className="text-[9px] text-slate-500 block mb-2 uppercase font-bold tracking-wider">Line Sequence & Stops</span>
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <span className="text-[9px] text-slate-400 block mb-2 uppercase font-black tracking-wider">Line Sequence & Stops</span>
                     <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
                       {route.stops.map((stop, idx) => (
                         <React.Fragment key={idx}>
                           <div className="flex flex-col items-center shrink-0">
-                            <span className="w-2.5 h-2.5 rounded-full border border-white bg-slate-800 flex items-center justify-center">
-                              <span className="w-1 h-1 rounded-full bg-amber-500" />
+                            <span className="w-2.5 h-2.5 rounded-full border border-slate-300 bg-white flex items-center justify-center shadow-xs">
+                              <span className="w-1 h-1 rounded-full bg-[#ff0055]" />
                             </span>
-                            <span className="text-[9px] text-slate-300 font-medium mt-1 whitespace-nowrap">{stop}</span>
+                            <span className="text-[9px] text-slate-600 font-bold mt-1 whitespace-nowrap">{stop}</span>
                           </div>
                           {idx < route.stops.length - 1 && (
-                            <div className="h-[1px] w-5 bg-slate-800 shrink-0" />
+                            <div className="h-[1px] w-5 bg-slate-200 shrink-0" />
                           )}
                         </React.Fragment>
                       ))}
@@ -476,12 +480,12 @@ export default function LiveMap({ onBackToPasses }: LiveMapProps) {
           </div>
         ) : (
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400">
+            <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-500">
               <MapPin className="w-5 h-5 animate-bounce" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-200">Interactive Chennai GIS Platform</h4>
-              <p className="text-[10px] text-slate-500">Tap route pills or bus indicators to view detailed spatial diagnostics.</p>
+              <h4 className="text-xs font-black text-slate-800">Interactive Chennai GIS Platform</h4>
+              <p className="text-[10px] text-slate-500 font-medium">Tap route pills or bus indicators to view detailed spatial diagnostics.</p>
             </div>
           </div>
         )}
