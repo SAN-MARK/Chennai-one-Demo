@@ -22,7 +22,9 @@ import {
   Sliders, 
   Database,
   ArrowUpDown,
-  Mail
+  Mail,
+  X,
+  Calendar
 } from 'lucide-react';
 import { MtcPass, UserProfile, TabType, IdType } from './types';
 import { INITIAL_USER, INITIAL_PASS, CHENNAI_ROUTES } from './data';
@@ -137,6 +139,8 @@ export default function App() {
   const [showConfigurator, setShowConfigurator] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [showRenewDialog, setShowRenewDialog] = useState(false);
+  const [renewDate, setRenewDate] = useState('01/09/2026');
 
   // Live clock in the phone header
   const [phoneClock, setPhoneClock] = useState<string>('13:26');
@@ -161,18 +165,8 @@ export default function App() {
   }, []);
 
   const handleRenewPass = () => {
-    // Renew pass
-    const updated = {
-      ...pass,
-      passNo: String(Math.floor(10000000 + Math.random() * 90000000)),
-      validTo: '01/09/2026', // Updated to 01/09/2026 per user's instruction
-      activatedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + new Date().toLocaleTimeString('en-US', { hour12: false })
-    };
-    setPass(updated);
-    setShowRenewalBanner(true);
-    setTimeout(() => {
-      setShowRenewalBanner(false);
-    }, 4000);
+    setRenewDate(pass.validTo || '01/09/2026');
+    setShowRenewDialog(true);
   };
 
   const handleRouteSearch = (e: React.FormEvent) => {
@@ -601,7 +595,6 @@ export default function App() {
                             pass={pass} 
                             onRenewClick={handleRenewPass}
                             onPhotoUpload={(url) => setPass(prev => ({ ...prev, photoUrl: url }))}
-                            onDateChange={(newDate) => setPass(prev => ({ ...prev, validTo: newDate }))}
                           />
                         </div>
                       </motion.div>
@@ -636,7 +629,13 @@ export default function App() {
                         animate={{ opacity: 1, x: 0 }}
                         className="absolute inset-x-0 top-7 bottom-16 flex flex-col"
                       >
-                        <ProfileTab user={user} onUserUpdate={setUser} onLogout={handleLogout} />
+                        <ProfileTab 
+                          user={user} 
+                          onUserUpdate={setUser} 
+                          pass={pass}
+                          onPassUpdate={setPass}
+                          onLogout={handleLogout} 
+                        />
                       </motion.div>
                     )}
                   </div>
@@ -751,6 +750,144 @@ export default function App() {
                         className="absolute inset-0 z-50"
                       >
                         <HelpSupport onClose={() => setShowHelp(false)} />
+                      </motion.div>
+                    )}
+
+                    {/* 4. Renew Pass Dialogue Box Modal */}
+                    {showRenewDialog && (
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-black/80 backdrop-blur-[4px] z-50 flex items-center justify-center p-4"
+                        onClick={() => setShowRenewDialog(false)}
+                      >
+                        <motion.div
+                          initial={{ scale: 0.95, y: 15 }}
+                          animate={{ scale: 1, y: 0 }}
+                          exit={{ scale: 0.95, y: 15 }}
+                          transition={{ type: 'spring', damping: 25, stiffness: 350 }}
+                          onClick={(e) => e.stopPropagation()}
+                          className="w-full max-w-[380px] bg-slate-900 border border-slate-800 rounded-[32px] p-5 shadow-2xl relative space-y-4 text-slate-100"
+                        >
+                          {/* Close button on top-right */}
+                          <button 
+                            onClick={() => setShowRenewDialog(false)}
+                            className="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800/50 hover:bg-slate-800 p-1.5 rounded-full transition-all"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+
+                          {/* Header with red shield/calendar accent */}
+                          <div className="flex items-center gap-2.5">
+                            <div className="p-2.5 bg-red-500/10 rounded-2xl border border-red-500/20">
+                              <Calendar className="w-5 h-5 text-red-500" />
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-display font-black tracking-wide uppercase text-slate-100">Renew Transit Pass</h3>
+                              <p className="text-[10px] text-slate-400 font-medium">Verify or adjust custom validity parameters</p>
+                            </div>
+                          </div>
+
+                          <div className="border-t border-slate-800 pt-3 space-y-3.5">
+                            <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                              Select or type your customized validity date. The renewed pass will be generated with a new verification signature.
+                            </p>
+
+                            <div className="space-y-3">
+                              <div className="grid grid-cols-12 gap-2">
+                                {/* Text Input */}
+                                <div className="col-span-8 font-sans">
+                                  <input 
+                                    type="text"
+                                    value={renewDate}
+                                    onChange={(e) => setRenewDate(e.target.value)}
+                                    placeholder="e.g. 01/09/2026"
+                                    className="w-full bg-slate-950 border border-slate-800 text-slate-100 text-xs rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-red-500 font-mono font-bold"
+                                  />
+                                </div>
+
+                                {/* Calendar Picker Wrapper */}
+                                <div className="col-span-4 relative font-sans">
+                                  <input 
+                                    type="date"
+                                    onChange={(e) => {
+                                      if (!e.target.value) return;
+                                      const [year, month, day] = e.target.value.split('-');
+                                      setRenewDate(`${day}/${month}/${year}`);
+                                    }}
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                  />
+                                  <div className="w-full h-full bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all select-none">
+                                    <Calendar className="w-4 h-4 text-red-400" />
+                                    <span>Pick</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Quick Date Presets */}
+                              <div className="flex flex-wrap gap-1.5 pt-1">
+                                <button
+                                  onClick={() => {
+                                    const d = new Date();
+                                    d.setMonth(d.getMonth() + 1);
+                                    const formatted = d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                                    setRenewDate(formatted);
+                                  }}
+                                  className="text-[10px] px-2.5 py-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                                >
+                                  +1 Month
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    const d = new Date();
+                                    d.setMonth(d.getMonth() + 3);
+                                    const formatted = d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                                    setRenewDate(formatted);
+                                  }}
+                                  className="text-[10px] px-2.5 py-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                                >
+                                  +3 Months
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    const d = new Date();
+                                    d.setFullYear(d.getFullYear() + 1);
+                                    const formatted = d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                                    setRenewDate(formatted);
+                                  }}
+                                  className="text-[10px] px-2.5 py-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                                >
+                                  +1 Year
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Final Action Button */}
+                          <div className="pt-2">
+                            <button
+                              onClick={() => {
+                                const updated = {
+                                  ...pass,
+                                  passNo: String(Math.floor(10000000 + Math.random() * 90000000)),
+                                  validTo: renewDate,
+                                  activatedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + new Date().toLocaleTimeString('en-US', { hour12: false }),
+                                  status: 'Active' as const
+                                };
+                                setPass(updated);
+                                setShowRenewDialog(false);
+                                setShowRenewalBanner(true);
+                                setTimeout(() => {
+                                  setShowRenewalBanner(false);
+                                }, 4000);
+                              }}
+                              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-sm font-bold uppercase tracking-wider shadow-lg active:scale-[0.98] transition-all cursor-pointer text-center"
+                            >
+                              Renew & Activate Pass
+                            </button>
+                          </div>
+                        </motion.div>
                       </motion.div>
                     )}
                   </AnimatePresence>
