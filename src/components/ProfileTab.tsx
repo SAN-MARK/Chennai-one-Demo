@@ -6,6 +6,7 @@ import { ShieldCheck, User, Settings, ShieldAlert, BadgeCheck, Eye, EyeOff, File
 interface ProfileTabProps {
   user: UserProfile;
   onUserUpdate: (updatedUser: UserProfile) => void;
+  onLogout?: () => void;
 }
 
 // Initial mock ledger of users for the Hub Operator Console
@@ -22,17 +23,25 @@ const INITIAL_ID_VERIFICATIONS = [
   { Timestamp: '2026-07-09 13:10:05', UserEmail: 'priya@outlook.com', FullName: 'Priya Dharshini', IDType: 'Voter ID' as IdType, IDNumber: 'XYZ9876543', VerificationStatus: 'Verified', ReviewNotes: 'Electoral data fully synchronized.', DocumentLink: 'doc_voter_ref.pdf' }
 ];
 
-export default function ProfileTab({ user, onUserUpdate }: ProfileTabProps) {
+export default function ProfileTab({ user, onUserUpdate, onLogout }: ProfileTabProps) {
   const [role, setRole] = useState<UserRole>(user.role);
   const [showIdMask, setShowIdMask] = useState(true);
   
   // State for user's own identity verification details
-  const [idVerification, setIdVerification] = useState<IdVerification>({
-    idType: 'Aadhaar',
-    idNumber: '1234-5678-9012',
-    status: 'Verified',
-    reviewNotes: 'Authenticated profile successfully validated through FindBack KYC gateway.'
+  const [idVerification, setIdVerification] = useState<IdVerification>(() => {
+    const saved = localStorage.getItem('findback_id_verification');
+    return saved ? JSON.parse(saved) : {
+      idType: 'Aadhaar',
+      idNumber: '1234-5678-9012',
+      status: 'Verified',
+      reviewNotes: 'Authenticated profile successfully validated through FindBack KYC gateway.'
+    };
   });
+
+  // Keep it in sync with localStorage
+  React.useEffect(() => {
+    localStorage.setItem('findback_id_verification', JSON.stringify(idVerification));
+  }, [idVerification]);
 
   // Operators database states
   const [operatorVerifications, setOperatorVerifications] = useState(INITIAL_ID_VERIFICATIONS);
@@ -367,6 +376,16 @@ export default function ProfileTab({ user, onUserUpdate }: ProfileTabProps) {
       ) : (
         /* ABSOLUTE DOM-LEVEL REMOVAL OF PRIVILEGED MODULE FOR STANDARD PROFILES */
         null
+      )}
+
+      {/* Sign Out Button */}
+      {onLogout && (
+        <button
+          onClick={onLogout}
+          className="mt-6 w-full py-3.5 px-4 rounded-xl bg-rose-950/30 hover:bg-rose-950/50 border border-rose-900/40 text-rose-200 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
+        >
+          Sign Out & Clear Session
+        </button>
       )}
     </div>
   );
