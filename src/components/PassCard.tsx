@@ -107,11 +107,61 @@ interface PassCardProps {
   pass: MtcPass;
   onRenewClick: () => void;
   onPhotoUpload?: (url: string) => void;
+  onDateChange?: (newDate: string) => void;
 }
 
-export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCardProps) {
+export default function PassCard({ pass, onRenewClick, onPhotoUpload, onDateChange }: PassCardProps) {
   const [liveTime, setLiveTime] = useState<Date>(new Date());
   const [isQrZoomed, setIsQrZoomed] = useState<boolean>(false);
+
+  // 24 Hours Customization Cooldown states
+  const [lastCustomized, setLastCustomized] = useState<number>(() => {
+    const stored = localStorage.getItem('mtc_last_date_customized_time');
+    return stored ? Number(stored) : 0;
+  });
+  const [cooldownRemaining, setCooldownRemaining] = useState<number>(0);
+
+  useEffect(() => {
+    if (!lastCustomized) {
+      setCooldownRemaining(0);
+      return;
+    }
+    const checkCooldown = () => {
+      const now = Date.now();
+      const diff = now - lastCustomized;
+      const twentyFourHours = 24 * 60 * 60 * 1000;
+      const remaining = twentyFourHours - diff;
+      if (remaining > 0) {
+        setCooldownRemaining(remaining);
+      } else {
+        setCooldownRemaining(0);
+      }
+    };
+    checkCooldown();
+    const interval = setInterval(checkCooldown, 1000);
+    return () => clearInterval(interval);
+  }, [lastCustomized]);
+
+  const handleDateChangeWithLock = (newDate: string) => {
+    onDateChange?.(newDate);
+    const now = Date.now();
+    localStorage.setItem('mtc_last_date_customized_time', now.toString());
+    setLastCustomized(now);
+  };
+
+  const handleFastForward24Hours = () => {
+    localStorage.removeItem('mtc_last_date_customized_time');
+    setLastCustomized(0);
+    setCooldownRemaining(0);
+  };
+
+  const formatCooldown = (ms: number) => {
+    const totalSecs = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSecs / 3600);
+    const minutes = Math.floor((totalSecs % 3600) / 60);
+    const seconds = totalSecs % 60;
+    return `${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
+  };
 
   // Update clock every second to match the dynamic live verification clock
   useEffect(() => {
@@ -326,6 +376,114 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
           }
         }}
       />
+
+      {/* Custom Validity Date Editor Panel allowing interactive changes */}
+      <div className="w-full max-w-[380px] bg-slate-900 border border-slate-800 rounded-2xl p-4 mt-6 mb-4 space-y-3" id="validity-date-editor-panel">
+        <div className="flex items-center justify-between text-slate-300">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-red-500" />
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-200">Custom Validity Date</span>
+          </div>
+          <span className="text-[9px] font-mono font-bold text-slate-500 bg-slate-950 px-2 py-0.5 rounded uppercase">Active Pass</span>
+        </div>
+        
+        {cooldownRemaining > 0 ? (
+          /* Locked Cooldown View */
+          <div className="bg-slate-950 border border-red-900/30 rounded-xl p-3 text-center space-y-2.5">
+            <div className="flex items-center justify-center gap-2 text-amber-400">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+              </span>
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider">Customization Locked</span>
+            </div>
+            
+            <p className="text-[11px] text-slate-400 leading-relaxed px-2">
+              Next customization allowed in <span className="text-white font-mono font-bold bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">{formatCooldown(cooldownRemaining)}</span>.
+            </p>
+
+            <div className="pt-1.5 border-t border-slate-900">
+              <button
+                type="button"
+                onClick={handleFastForward24Hours}
+                className="w-full py-2 rounded-lg bg-red-600/10 hover:bg-red-600/20 active:scale-95 text-red-400 text-[10px] font-black uppercase tracking-wider border border-red-500/20 transition-all cursor-pointer"
+              >
+                ⚡ Bypass / Fast-Forward 24 hrs
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* Editable Input View */
+          <>
+            <div className="grid grid-cols-12 gap-2">
+              {/* Text Input for Custom value */}
+              <div className="col-span-8">
+                <input 
+                  type="text"
+                  value={pass.validTo}
+                  onChange={(e) => handleDateChangeWithLock(e.target.value)}
+                  placeholder="e.g. 01/09/2026"
+                  className="w-full bg-slate-950 border border-slate-800 text-slate-100 text-xs rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-red-500 font-mono"
+                />
+              </div>
+
+              {/* Calendar Picker Wrapper */}
+              <div className="col-span-4 relative">
+                <input 
+                  type="date"
+                  onChange={(e) => {
+                    if (!e.target.value) return;
+                    const [year, month, day] = e.target.value.split('-');
+                    handleDateChangeWithLock(`${day}/${month}/${year}`);
+                  }}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                />
+                <div className="w-full h-full bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all select-none">
+                  <Calendar className="w-4 h-4 text-red-400" />
+                  <span>Pick</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Date Presets */}
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              <button
+                onClick={() => {
+                  const d = new Date();
+                  d.setMonth(d.getMonth() + 1);
+                  const formatted = d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                  handleDateChangeWithLock(formatted);
+                }}
+                className="text-[10px] px-2.5 py-1 bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold rounded-lg transition-all active:scale-95 cursor-pointer"
+              >
+                +1 Month
+              </button>
+              <button
+                onClick={() => {
+                  const d = new Date();
+                  d.setMonth(d.getMonth() + 3);
+                  const formatted = d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                  handleDateChangeWithLock(formatted);
+                }}
+                className="text-[10px] px-2.5 py-1 bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold rounded-lg transition-all active:scale-95 cursor-pointer"
+              >
+                +3 Months
+              </button>
+              <button
+                onClick={() => {
+                  const d = new Date();
+                  d.setFullYear(d.getFullYear() + 1);
+                  const formatted = d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                  handleDateChangeWithLock(formatted);
+                }}
+                className="text-[10px] px-2.5 py-1 bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold rounded-lg transition-all active:scale-95 cursor-pointer"
+              >
+                +1 Year
+              </button>
+            </div>
+          </>
+        )}
+      </div>
 
       {/* Renew Button */}
       <button

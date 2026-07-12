@@ -21,7 +21,8 @@ import {
   Battery, 
   Sliders, 
   Database,
-  ArrowUpDown
+  ArrowUpDown,
+  Mail
 } from 'lucide-react';
 import { MtcPass, UserProfile, TabType, IdType } from './types';
 import { INITIAL_USER, INITIAL_PASS, CHENNAI_ROUTES } from './data';
@@ -41,7 +42,7 @@ export default function App() {
   const [loginName, setLoginName] = useState('');
   const [loginMobile, setLoginMobile] = useState('');
   const [loginAadhaar, setLoginAadhaar] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
+  const [loginEmail, setLoginEmail] = useState('');
 
   const [user, setUser] = useState<UserProfile>(() => {
     const saved = localStorage.getItem('findback_user');
@@ -75,13 +76,14 @@ export default function App() {
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!loginName || !loginMobile || !loginAadhaar || !loginPassword) return;
+    if (!loginName || !loginMobile || !loginAadhaar || !loginEmail) return;
 
     // 1. Update user profile details
     const updatedUser: UserProfile = {
       ...user,
       name: loginName,
       phone: loginMobile,
+      email: loginEmail,
       role: 'OWNER'
     };
     setUser(updatedUser);
@@ -128,7 +130,7 @@ export default function App() {
     setLoginName('');
     setLoginMobile('');
     setLoginAadhaar('');
-    setLoginPassword('');
+    setLoginEmail('');
   };
 
   // Modular screen/form display states
@@ -291,13 +293,10 @@ export default function App() {
           >
             {/* Top Smartphone Camera Notch element (Mock Bezel details for realism) */}
             <div className="absolute top-0 inset-x-0 h-7 bg-slate-950 z-50 flex justify-between items-center px-6 text-xs pointer-events-none select-none">
-              <span className="font-sans font-bold text-slate-400 text-[11px]">{phoneClock}</span>
+              <span className="font-sans font-bold text-slate-400 text-[11px]"></span>
               {/* Central Camera pill */}
               <div className="hidden md:block w-24 h-4 bg-black rounded-full mx-auto border border-neutral-900 absolute left-1/2 -translate-x-1/2 top-1.5" />
               <div className="flex items-center gap-1.5 text-slate-400">
-                <Wifi className="w-3.5 h-3.5" />
-                <span className="font-mono text-[9px] font-bold">5G</span>
-                <Battery className="w-4 h-4 text-emerald-400 fill-current" />
               </div>
             </div>
 
@@ -305,22 +304,38 @@ export default function App() {
             <div className="flex-grow flex flex-col pt-7 pb-16 relative overflow-hidden" id="simulated-touch-screen">
               
               {!isLoggedIn ? (
-                /* BEAUTIFUL LOGIN SCREEN */
+                /* BEAUTIFUL CHENNAI ONE RED & WHITE LOGIN SCREEN */
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex-grow flex flex-col p-6 overflow-y-auto no-scrollbar bg-[#0a0f1d] justify-center"
+                  className="flex-grow flex flex-col p-6 overflow-y-auto no-scrollbar bg-gradient-to-b from-[#ff0a24] via-[#ff0055] to-[#db0060] justify-center relative select-none"
                   id="mtc-login-screen"
                 >
-                  {/* Visual logo and title */}
-                  <div className="text-center mb-5 shrink-0 mt-2">
-                    <div className="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg border-2 border-amber-400 mb-3 animate-[pulse_3s_infinite]">
-                      <Bus className="w-8 h-8 text-slate-950 fill-current" />
+                  {/* Authenticity Tamil/English Badge in top-right */}
+                  <div className="absolute top-4 right-4 bg-[#8e090f]/40 border border-white/20 px-2.5 py-1 rounded-xl flex items-center gap-1.5 shadow-md backdrop-blur-sm">
+                    <div className="w-3.5 h-3.5 rounded-full bg-amber-400 flex items-center justify-center shrink-0">
+                      <span className="text-[7px] font-black text-red-900">C1</span>
                     </div>
-                    <span className="text-[10px] text-amber-500 font-extrabold tracking-widest uppercase font-mono">Chennai Metro Transit</span>
-                    <h2 className="text-xl font-display font-bold text-white mt-1">Vanakkom! Welcome</h2>
-                    <p className="text-[11px] text-slate-400 mt-1 font-sans leading-relaxed">
-                      Please log in with your credentials to activate and view your digital transit pass.
+                    <div className="flex flex-col leading-none">
+                      <span className="text-[8px] font-sans font-black text-white tracking-widest">விகடன்</span>
+                      <span className="text-[5px] font-mono font-medium text-amber-300">VIKATAN.COM</span>
+                    </div>
+                  </div>
+
+                  {/* Visual logo and title matching the attached image exactly */}
+                  <div className="text-center mb-6 shrink-0 mt-3">
+                    <div className="flex justify-center mb-3">
+                      <svg viewBox="0 0 100 100" className="w-20 h-20 text-white fill-none stroke-current animate-[pulse_3s_infinite]">
+                        {/* Open circle contour with gap at bottom-right */}
+                        <path d="M 50 15 A 35 35 0 1 0 71 71" strokeWidth="10" strokeLinecap="round" />
+                        {/* Number 1 inside */}
+                        <path d="M 51 35 L 51 72 M 41 45 L 51 35" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    <h1 className="text-3xl font-sans font-black tracking-tighter text-white uppercase leading-none">chennai</h1>
+                    <h1 className="text-3xl font-sans font-black tracking-tighter text-white uppercase leading-none mt-1">one</h1>
+                    <p className="text-[9px] text-red-100 font-bold tracking-wider mt-2.5 opacity-90 uppercase font-mono">
+                      Chennai Metro Transit Pass Portal
                     </p>
                   </div>
 
@@ -328,60 +343,62 @@ export default function App() {
                   <form onSubmit={handleLoginSubmit} className="space-y-4 font-sans text-xs">
                     {/* Name input */}
                     <div className="space-y-1">
-                      <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider">Full Name</label>
+                      <label className="block text-[10px] uppercase font-bold text-white tracking-wider">Full Name</label>
                       <input 
                         type="text" 
                         required
                         value={loginName}
                         onChange={(e) => setLoginName(e.target.value)}
                         placeholder="e.g. Sanjeev M"
-                        className="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 font-medium font-sans"
+                        className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-3.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-sans shadow-sm transition-all"
                       />
                     </div>
 
                     {/* Mobile Input */}
                     <div className="space-y-1">
-                      <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider">Mobile Number</label>
+                      <label className="block text-[10px] uppercase font-bold text-white tracking-wider">Mobile Number</label>
                       <input 
                         type="tel" 
                         required
                         value={loginMobile}
                         onChange={(e) => setLoginMobile(e.target.value)}
                         placeholder="e.g. +91 98401 23456"
-                        className="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 font-medium font-mono"
+                        className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-3.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-mono shadow-sm transition-all"
                       />
                     </div>
 
                     {/* Aadhaar Input */}
                     <div className="space-y-1">
-                      <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider">Aadhaar Number</label>
+                      <label className="block text-[10px] uppercase font-bold text-white tracking-wider">Aadhaar Number</label>
                       <input 
                         type="text" 
                         required
                         value={loginAadhaar}
                         onChange={handleAadhaarChange}
                         placeholder="e.g. 1234-5678-9012"
-                        className="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 font-medium font-mono"
+                        className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-3.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-mono shadow-sm transition-all"
                       />
                     </div>
 
-                    {/* Password Input */}
+                    {/* Email Input (Replaced Password section as requested) */}
                     <div className="space-y-1">
-                      <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider">Password</label>
+                      <label className="block text-[10px] uppercase font-bold text-white tracking-wider flex items-center gap-1">
+                        <Mail className="w-3 h-3" /> Email Address
+                      </label>
                       <input 
-                        type="password" 
+                        type="email" 
                         required
-                        value={loginPassword}
-                        onChange={(e) => setLoginPassword(e.target.value)}
-                        placeholder="••••••••"
-                        className="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 font-medium font-mono"
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                        placeholder="e.g. sanjeev@chennai.gov.in"
+                        className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-3.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-mono shadow-sm transition-all"
                       />
                     </div>
 
                     {/* Submit Button */}
                     <button 
                       type="submit"
-                      className="w-full mt-4 py-3 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-600 transition-colors flex items-center justify-center gap-1.5 shadow-md active:scale-95 cursor-pointer"
+                      className="w-full mt-5 py-3 rounded-xl bg-white text-[#ff0055] font-black text-xs hover:bg-slate-50 transition-all flex items-center justify-center gap-1.5 shadow-lg active:scale-95 cursor-pointer uppercase tracking-wider"
                     >
                       Authenticate & Access Pass
                     </button>
@@ -579,6 +596,7 @@ export default function App() {
                             pass={pass} 
                             onRenewClick={handleRenewPass}
                             onPhotoUpload={(url) => setPass(prev => ({ ...prev, photoUrl: url }))}
+                            onDateChange={(newDate) => setPass(prev => ({ ...prev, validTo: newDate }))}
                           />
                         </div>
                       </motion.div>
