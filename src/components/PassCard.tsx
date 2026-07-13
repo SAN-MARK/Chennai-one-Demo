@@ -206,13 +206,22 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
             className="relative w-[110px] h-[110px] rounded-2xl overflow-hidden shadow-md border-[3px] border-[#ecd695] bg-slate-50 flex items-center justify-center group flex-shrink-0 cursor-pointer hover:scale-105 active:scale-95 transition-transform outline-none"
             title="Click to upload custom photo from device"
           >
-            {/* Embedded profile image */}
-            <img 
-              src={pass.photoUrl || defaultProfilePic} 
-              alt="Pass Holder Profile" 
-              className="w-full h-full object-cover group-hover:opacity-75 transition-opacity"
-              referrerPolicy="no-referrer"
-            />
+            {/* Embedded profile image or person SVG */}
+            {pass.photoUrl ? (
+              <img 
+                src={pass.photoUrl} 
+                alt="Pass Holder Profile" 
+                className="w-full h-full object-cover group-hover:opacity-75 transition-opacity"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <div className="w-full h-full bg-slate-100 flex flex-col items-center justify-center p-2 text-slate-400 group-hover:bg-slate-200 transition-colors">
+                <svg viewBox="0 0 24 24" className="w-16 h-16 stroke-slate-300 fill-slate-200/50 stroke-[1.2]">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z" />
+                </svg>
+                <span className="text-[7px] text-slate-400 font-bold uppercase tracking-wide -mt-1 leading-none">Photo</span>
+              </div>
+            )}
             {/* Hover Camera Icon Indicator overlay */}
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center gap-1 transition-opacity">
               <Camera className="w-5 h-5 text-amber-400" />

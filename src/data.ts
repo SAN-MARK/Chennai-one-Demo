@@ -1,6 +1,6 @@
 import { MtcPass, UserProfile, BusRoute, BusMarker, TransactionHistory } from './types';
-// @ts-expect-error - image file type declarations are handled at runtime
-import selfieImg from './assets/images/sanjeev_selfie_id_1783758620472.jpg';
+// Fallback profile image (empty string triggers typography-based fallback)
+const selfieImg = '';
 
 export const INITIAL_USER: UserProfile = {
   name: 'Sanjeev M',

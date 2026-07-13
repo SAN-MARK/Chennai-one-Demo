@@ -24,7 +24,9 @@ import {
   ArrowUpDown,
   Mail,
   X,
-  Calendar
+  Calendar,
+  Camera,
+  Upload
 } from 'lucide-react';
 import { MtcPass, UserProfile, TabType, IdType } from './types';
 import { INITIAL_USER, INITIAL_PASS, CHENNAI_ROUTES } from './data';
@@ -141,6 +143,7 @@ export default function App() {
   const [showHelp, setShowHelp] = useState(false);
   const [showRenewDialog, setShowRenewDialog] = useState(false);
   const [renewDate, setRenewDate] = useState('01/09/2026');
+  const [renewPhotoUrl, setRenewPhotoUrl] = useState('');
 
   // Live clock in the phone header
   const [phoneClock, setPhoneClock] = useState<string>('13:26');
@@ -166,6 +169,7 @@ export default function App() {
 
   const handleRenewPass = () => {
     setRenewDate(pass.validTo || '01/09/2026');
+    setRenewPhotoUrl(pass.photoUrl || '');
     setShowRenewDialog(true);
   };
 
@@ -305,78 +309,67 @@ export default function App() {
                   className="flex-grow flex flex-col p-6 overflow-y-auto no-scrollbar bg-gradient-to-b from-[#ff0a24] via-[#ff0055] to-[#db0060] justify-center relative select-none"
                   id="mtc-login-screen"
                 >
-                  {/* Authenticity Tamil/English Badge in top-right */}
-                  <div className="absolute top-4 right-4 bg-[#8e090f]/40 border border-white/20 px-2.5 py-1 rounded-xl flex items-center gap-1.5 shadow-md backdrop-blur-sm">
-                    <div className="w-3.5 h-3.5 rounded-full bg-amber-400 flex items-center justify-center shrink-0">
-                      <span className="text-[7px] font-black text-red-900">C1</span>
-                    </div>
-                    <div className="flex flex-col leading-none">
-                      <span className="text-[8px] font-sans font-black text-white tracking-widest">விகடன்</span>
-                      <span className="text-[5px] font-mono font-medium text-amber-300">VIKATAN.COM</span>
-                    </div>
-                  </div>
-
                   {/* Visual logo and title matching the attached image exactly */}
-                  <div className="text-center mb-6 shrink-0 mt-3">
-                    <div className="flex justify-center mb-3">
-                      <svg viewBox="0 0 100 100" className="w-20 h-20 text-white fill-none stroke-current animate-[pulse_3s_infinite]">
+                  <div className="text-center mb-8 shrink-0 mt-4">
+                    <div className="flex justify-center mb-4">
+                      <svg viewBox="0 0 100 100" className="w-24 h-24 text-white fill-none stroke-current animate-[pulse_3s_infinite]">
                         {/* Open circle contour with gap at bottom-right */}
                         <path d="M 50 15 A 35 35 0 1 0 71 71" strokeWidth="10" strokeLinecap="round" />
                         {/* Number 1 inside */}
                         <path d="M 51 35 L 51 72 M 41 45 L 51 35" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </div>
-                    <h1 className="text-3xl font-sans font-black tracking-tighter text-white uppercase leading-none">chennai</h1>
-                    <h1 className="text-3xl font-sans font-black tracking-tighter text-white uppercase leading-none mt-1">one</h1>
-                    <p className="text-[9px] text-red-100 font-bold tracking-wider mt-2.5 opacity-90 uppercase font-mono">
+                    <h1 className="text-4xl font-sans font-black tracking-tighter text-white uppercase leading-none">chennai</h1>
+                    <h1 className="text-4xl font-sans font-black tracking-tighter text-white uppercase leading-none mt-1">one</h1>
+                    <p className="text-[10px] text-red-100 font-bold tracking-wider mt-3.5 opacity-90 uppercase font-mono">
                       Chennai Metro Transit Pass Portal
                     </p>
                   </div>
 
                   {/* Form */}
-                  <form onSubmit={handleLoginSubmit} className="space-y-4 font-sans text-xs">
+                  <form onSubmit={handleLoginSubmit} className="space-y-5 font-sans text-xs">
                     {/* Name input */}
-                    <div className="space-y-1">
-                      <label className="block text-[10px] uppercase font-bold text-white tracking-wider">Full Name</label>
+                    <div className="flex flex-col">
+                      <label className="block text-[11px] uppercase font-bold text-white tracking-wider mb-1.5">Full Name</label>
                       <input 
                         type="text" 
                         required
                         value={loginName}
                         onChange={(e) => setLoginName(e.target.value)}
                         placeholder="e.g. Sanjeev M"
-                        className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-3.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-sans shadow-sm transition-all"
+                        className="w-full bg-white border border-slate-200 rounded-xl py-3 px-4 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-sans shadow-sm transition-all"
                       />
                     </div>
 
                     {/* Mobile Input */}
-                    <div className="space-y-1">
-                      <label className="block text-[10px] uppercase font-bold text-white tracking-wider">Mobile Number</label>
+                    <div className="flex flex-col">
+                      <label className="block text-[11px] uppercase font-bold text-white tracking-wider mb-1.5">Mobile Number</label>
                       <input 
                         type="tel" 
                         required
                         value={loginMobile}
                         onChange={(e) => setLoginMobile(e.target.value)}
                         placeholder="e.g. +91 98401 23456"
-                        className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-3.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-mono shadow-sm transition-all"
+                        className="w-full bg-white border border-slate-200 rounded-xl py-3 px-4 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-mono shadow-sm transition-all"
                       />
                     </div>
 
                     {/* Aadhaar Input */}
-                    <div className="space-y-1">
-                      <label className="block text-[10px] uppercase font-bold text-white tracking-wider">Aadhaar Number</label>
+                    <div className="flex flex-col">
+                      <label className="block text-[11px] uppercase font-bold text-white tracking-wider mb-1.5">Aadhaar Number</label>
                       <input 
                         type="text" 
                         required
                         value={loginAadhaar}
                         onChange={handleAadhaarChange}
                         placeholder="e.g. 1234-5678-9012"
-                        className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-3.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-mono shadow-sm transition-all"
+                        className="w-full bg-white border border-slate-200 rounded-xl py-3 px-4 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-mono shadow-sm transition-all"
                       />
                     </div>
 
                     {/* Email Input (Replaced Password section as requested) */}
-                    <div className="space-y-1">
-                      <label className="block text-[10px] uppercase font-bold text-white tracking-wider flex items-center gap-1">
+                    <div className="flex flex-col">
+                      <label className="block text-[11px] uppercase font-bold text-white tracking-wider mb-1.5 flex items-center gap-1">
                         <Mail className="w-3 h-3" /> Email Address
                       </label>
                       <input 
@@ -385,14 +378,14 @@ export default function App() {
                         value={loginEmail}
                         onChange={(e) => setLoginEmail(e.target.value)}
                         placeholder="e.g. sanjeev@chennai.gov.in"
-                        className="w-full bg-white border border-slate-200 rounded-xl py-2.5 px-3.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-mono shadow-sm transition-all"
+                        className="w-full bg-white border border-slate-200 rounded-xl py-3 px-4 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-mono shadow-sm transition-all"
                       />
                     </div>
 
                     {/* Submit Button */}
                     <button 
                       type="submit"
-                      className="w-full mt-5 py-3 rounded-xl bg-white text-[#ff0055] font-black text-xs hover:bg-slate-50 transition-all flex items-center justify-center gap-1.5 shadow-lg active:scale-95 cursor-pointer uppercase tracking-wider"
+                      className="w-full mt-6 py-3.5 rounded-xl bg-white text-[#ff0055] font-black text-sm hover:bg-slate-50 transition-all flex items-center justify-center gap-1.5 shadow-lg active:scale-95 cursor-pointer uppercase tracking-wider"
                     >
                       Authenticate & Access Pass
                     </button>
@@ -785,13 +778,13 @@ export default function App() {
                             </div>
                             <div>
                               <h3 className="text-sm font-display font-black tracking-wide uppercase text-slate-100">Renew Transit Pass</h3>
-                              <p className="text-[10px] text-slate-400 font-medium">Verify or adjust custom validity parameters</p>
+                              <p className="text-[10px] text-slate-400 font-medium">Verify parameters and upload photo</p>
                             </div>
                           </div>
 
                           <div className="border-t border-slate-800 pt-3 space-y-3.5">
                             <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
-                              Select or type your customized validity date. The renewed pass will be generated with a new verification signature.
+                              Select or type your customized validity date and upload your confirmation photo to activate the pass.
                             </p>
 
                             <div className="space-y-3">
@@ -862,6 +855,85 @@ export default function App() {
                                 </button>
                               </div>
                             </div>
+
+                            {/* Required Portrait Photo Upload section for renewal confirmation */}
+                            <div className="border-t border-slate-800 pt-3.5 space-y-2.5">
+                              <label className="block text-[11px] uppercase font-bold text-slate-300 tracking-wider">
+                                Required Photo Confirmation
+                              </label>
+                              <p className="text-[10px] text-slate-400 leading-normal">
+                                Upload a photo of yourself to give confirmation and associate it with this active transit pass.
+                              </p>
+
+                              <div className="flex items-center gap-3">
+                                <button 
+                                  type="button"
+                                  onClick={() => document.getElementById('renew-modal-photo-input')?.click()}
+                                  className="w-16 h-16 rounded-xl bg-slate-950 border border-slate-800 hover:border-red-500/50 flex flex-col items-center justify-center cursor-pointer transition-colors overflow-hidden shrink-0 relative group"
+                                  title="Upload Portrait Photo"
+                                >
+                                  {renewPhotoUrl ? (
+                                    <img 
+                                      src={renewPhotoUrl} 
+                                      alt="Profile Preview" 
+                                      className="w-full h-full object-cover"
+                                      referrerPolicy="no-referrer"
+                                    />
+                                  ) : (
+                                    <div className="flex flex-col items-center justify-center text-slate-500">
+                                      <Upload className="w-5 h-5 text-slate-400 mb-0.5" />
+                                      <span className="text-[7px] font-black uppercase tracking-wider text-center leading-none">Upload</span>
+                                    </div>
+                                  )}
+                                  {renewPhotoUrl && (
+                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                      <Camera className="w-4 h-4 text-white" />
+                                    </div>
+                                  )}
+                                </button>
+
+                                <div className="flex-1 min-h-[64px] flex flex-col justify-center">
+                                  {renewPhotoUrl ? (
+                                    <div className="space-y-1">
+                                      <span className="text-[9px] font-mono font-bold text-emerald-400 flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md w-fit">
+                                        <CheckCircle2 className="w-3 h-3 text-emerald-400" /> PHOTO CONFIRMED
+                                      </span>
+                                      <button 
+                                        type="button" 
+                                        onClick={() => setRenewPhotoUrl('')}
+                                        className="text-[10px] text-red-400 hover:text-red-300 font-bold underline cursor-pointer block"
+                                      >
+                                        Remove/Change
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <div className="text-[9.5px] text-amber-400 flex items-start gap-1.5 bg-amber-500/5 border border-amber-500/10 p-2 rounded-xl">
+                                      <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                                      <span>Please upload a portrait image to proceed with verification & activation.</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              <input 
+                                id="renew-modal-photo-input"
+                                type="file" 
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = (event) => {
+                                      if (event.target?.result) {
+                                        setRenewPhotoUrl(event.target.result as string);
+                                      }
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }
+                                }}
+                              />
+                            </div>
                           </div>
 
                           {/* Final Action Button */}
@@ -872,6 +944,7 @@ export default function App() {
                                   ...pass,
                                   passNo: String(Math.floor(10000000 + Math.random() * 90000000)),
                                   validTo: renewDate,
+                                  photoUrl: renewPhotoUrl,
                                   activatedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + new Date().toLocaleTimeString('en-US', { hour12: false }),
                                   status: 'Active' as const
                                 };
