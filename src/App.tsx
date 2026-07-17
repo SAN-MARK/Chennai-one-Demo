@@ -26,9 +26,10 @@ import {
   X,
   Calendar,
   Camera,
-  Upload
+  Upload,
+  Wallet
 } from 'lucide-react';
-import { MtcPass, UserProfile, TabType, IdType } from './types';
+import { MtcPass, UserProfile, TabType, IdType, WalletTransaction } from './types';
 import { INITIAL_USER, INITIAL_PASS, CHENNAI_ROUTES } from './data';
 import PassCard from './components/PassCard';
 import PassForm from './components/PassForm';
@@ -37,6 +38,8 @@ import TicketSimulator from './components/TicketSimulator';
 import ProfileTab from './components/ProfileTab';
 import HistoryLogs from './components/HistoryLogs';
 import HelpSupport from './components/HelpSupport';
+import WalletTab from './components/WalletTab';
+import QrScannerOverlay from './components/QrScannerOverlay';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
@@ -141,9 +144,45 @@ export default function App() {
   const [showConfigurator, setShowConfigurator] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
   const [showRenewDialog, setShowRenewDialog] = useState(false);
   const [renewDate, setRenewDate] = useState('01/09/2026');
   const [renewPhotoUrl, setRenewPhotoUrl] = useState('');
+  const [renewError, setRenewError] = useState<string | null>(null);
+
+  // e-Wallet states
+  const [walletBalance, setWalletBalance] = useState<number>(() => {
+    const saved = localStorage.getItem('findback_wallet_balance');
+    return saved ? parseFloat(saved) : 1500;
+  });
+
+  const [walletTransactions, setWalletTransactions] = useState<WalletTransaction[]>(() => {
+    const saved = localStorage.getItem('findback_wallet_transactions');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        // fallback
+      }
+    }
+    return [
+      {
+        id: 'tx-initial',
+        type: 'Top Up',
+        amount: 1500,
+        timestamp: new Date().toLocaleDateString('en-IN') + ' ' + new Date().toLocaleTimeString('en-IN', { hour12: false }),
+        description: 'Welcome Bonus Credited'
+      }
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('findback_wallet_balance', walletBalance.toString());
+  }, [walletBalance]);
+
+  useEffect(() => {
+    localStorage.setItem('findback_wallet_transactions', JSON.stringify(walletTransactions));
+  }, [walletTransactions]);
 
   // Live clock in the phone header
   const [phoneClock, setPhoneClock] = useState<string>('13:26');
@@ -170,6 +209,7 @@ export default function App() {
   const handleRenewPass = () => {
     setRenewDate(pass.validTo || '01/09/2026');
     setRenewPhotoUrl(pass.photoUrl || '');
+    setRenewError(null);
     setShowRenewDialog(true);
   };
 
@@ -557,6 +597,14 @@ export default function App() {
                         <div className="flex items-center justify-between pb-4 shrink-0" id="mtc-passes-header">
                           <h1 className="text-2xl font-display font-black text-white" id="passes-screen-title">Passes</h1>
                           <div className="flex gap-2">
+                            {/* QR Scanner Button */}
+                            <button 
+                              onClick={() => setShowScanner(true)}
+                              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#ff0055] hover:bg-[#db0048] active:scale-95 transition-all text-xs font-bold rounded-full text-white border border-[#ff0055]/20 shadow-md cursor-pointer select-none"
+                              id="btn-scan-qr"
+                            >
+                              <QrCode className="w-3.5 h-3.5" /> Scan QR
+                            </button>
                             {/* Help Button */}
                             <button 
                               onClick={() => setShowHelp(true)}
@@ -631,6 +679,32 @@ export default function App() {
                         />
                       </motion.div>
                     )}
+
+                    {/* 6. WALLET SCREEN TAB */}
+                    {activeTab === 'wallet' && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute inset-x-0 top-7 bottom-16 flex flex-col p-5 overflow-y-auto no-scrollbar"
+                      >
+                        <WalletTab 
+                          balance={walletBalance} 
+                          transactions={walletTransactions} 
+                          pass={pass} 
+                          onTopUp={(amount) => {
+                            setWalletBalance(prev => prev + amount);
+                            const newTx: WalletTransaction = {
+                              id: 'tx-' + Date.now(),
+                              type: 'Top Up',
+                              amount: amount,
+                              timestamp: new Date().toLocaleDateString('en-IN') + ' ' + new Date().toLocaleTimeString('en-IN', { hour12: false }),
+                              description: 'Wallet Top Up'
+                            };
+                            setWalletTransactions(prev => [...prev, newTx]);
+                          }} 
+                        />
+                      </motion.div>
+                    )}
                   </div>
 
                   {/* PERSISTENT STICKY BOTTOM UTILITY NAVIGATION BAR */}
@@ -687,7 +761,18 @@ export default function App() {
                       <span className="text-[9px] font-sans font-semibold mt-0.5">Ticket</span>
                     </button>
 
-                    {/* 5. Profile setup button */}
+                    {/* 5. Wallet button */}
+                    <button 
+                      onClick={() => setActiveTab('wallet')}
+                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                        activeTab === 'wallet' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                      }`}
+                    >
+                      <Wallet className="w-5 h-5 stroke-[2]" />
+                      <span className="text-[9px] font-sans font-semibold mt-0.5">Wallet</span>
+                    </button>
+
+                    {/* 6. Profile setup button */}
                     <button 
                       onClick={() => setActiveTab('profile')}
                       className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
@@ -745,6 +830,13 @@ export default function App() {
                         <HelpSupport onClose={() => setShowHelp(false)} />
                       </motion.div>
                     )}
+
+                    {/* QR Scanner Overlay */}
+                    <QrScannerOverlay 
+                      isOpen={showScanner} 
+                      onClose={() => setShowScanner(false)} 
+                      pass={pass} 
+                    />
 
                     {/* 4. Renew Pass Dialogue Box Modal */}
                     {showRenewDialog && (
@@ -936,10 +1028,44 @@ export default function App() {
                             </div>
                           </div>
 
+                          {renewError && (
+                            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs p-3 rounded-xl space-y-1.5 font-sans">
+                              <p className="font-bold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5 text-rose-400" /> Payment Failed</p>
+                              <p className="text-[10.5px] leading-relaxed text-slate-300">{renewError}</p>
+                              <button
+                                onClick={() => {
+                                  setShowRenewDialog(false);
+                                  setActiveTab('wallet');
+                                }}
+                                className="text-xs text-amber-400 hover:underline font-bold block pt-1"
+                              >
+                                Go to Wallet Tab to Top Up ➔
+                              </button>
+                            </div>
+                          )}
+
                           {/* Final Action Button */}
                           <div className="pt-2">
                             <button
                               onClick={() => {
+                                if (walletBalance < pass.amount) {
+                                  setRenewError(`Your e-wallet balance (₹${walletBalance}) is insufficient for this ₹${pass.amount} renewal. please top up.`);
+                                  return;
+                                }
+
+                                // Deduct balance
+                                setWalletBalance(prev => prev - pass.amount);
+
+                                // Create Wallet ledger entry
+                                const newTx: WalletTransaction = {
+                                  id: 'tx-' + Date.now(),
+                                  type: 'Deduction',
+                                  amount: pass.amount,
+                                  timestamp: new Date().toLocaleDateString('en-IN') + ' ' + new Date().toLocaleTimeString('en-IN', { hour12: false }),
+                                  description: `Pass Renewal (${pass.type})`
+                                };
+                                setWalletTransactions(prev => [...prev, newTx]);
+
                                 const updated = {
                                   ...pass,
                                   passNo: String(Math.floor(10000000 + Math.random() * 90000000)),

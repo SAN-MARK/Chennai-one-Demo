@@ -56,7 +56,15 @@ export interface BusMarker {
 
 export type MapMode = 'standard' | 'satellite' | 'terrain';
 
-export type TabType = 'home' | 'passes' | 'live' | 'ticket' | 'profile';
+export type TabType = 'home' | 'passes' | 'live' | 'ticket' | 'profile' | 'wallet';
+
+export interface WalletTransaction {
+  id: string;
+  type: 'Top Up' | 'Deduction';
+  amount: number;
+  timestamp: string;
+  description: string;
+}
 
 export interface TransactionHistory {
   id: string;

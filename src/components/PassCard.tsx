@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { MtcPass } from '../types';
-import { ShieldCheck, Calendar, Info, QrCode, Camera, Upload } from 'lucide-react';
+import { ShieldCheck, Calendar, Info, QrCode, Camera, Upload, Download, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { jsPDF } from 'jspdf';
 
 const MtcLogoSvg = () => (
   <svg viewBox="0 0 100 100" className="w-14 h-14 select-none drop-shadow-md">
@@ -112,6 +113,293 @@ interface PassCardProps {
 export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCardProps) {
   const [liveTime, setLiveTime] = useState<Date>(new Date());
   const [isQrZoomed, setIsQrZoomed] = useState<boolean>(false);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState<boolean>(false);
+
+  const fetchImageAsBase64 = async (url: string): Promise<string> => {
+    if (!url) return '';
+    if (url.startsWith('data:image')) {
+      return url;
+    }
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error("Error fetching image for PDF:", error);
+      return ''; // return empty so fallback silhouette is used instead of crashing the doc
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    setIsGeneratingPdf(true);
+    try {
+      const doc = new jsPDF('p', 'mm', 'a4');
+
+      // 1. Fetch images (QR Code and custom profile photo if present)
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
+        `MTC-PASS-VERIFIED\nNo: ${pass.passNo}\nName: ${pass.name}\nType: ${pass.type}\nValid To: ${pass.validTo}\nVerified At: ${formatMonthDay(liveTime)} ${formatTime(liveTime)}`
+      )}`;
+
+      const [qrBase64, photoBase64] = await Promise.all([
+        fetchImageAsBase64(qrUrl),
+        pass.photoUrl ? fetchImageAsBase64(pass.photoUrl) : Promise.resolve('')
+      ]);
+
+      // --- PAGE HEADER (A4 size: 210 x 297 mm) ---
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.setTextColor(15, 23, 42); // deep slate
+      doc.text("METROPOLITAN TRANSPORT CORPORATION (CHENNAI) LTD.", 105, 20, { align: 'center' });
+      
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(71, 85, 105); // light slate
+      doc.text("Official Digital Travel Pass - Printable Offline Backup", 105, 26, { align: 'center' });
+
+      // Solid dividing line
+      doc.setDrawColor(226, 232, 240);
+      doc.setLineWidth(0.4);
+      doc.line(20, 31, 190, 31);
+
+      // --- PRINT CUTTING GUIDELINES ---
+      // Dashed rectangle to show where to cut
+      doc.setLineDashPattern([2, 2], 0);
+      doc.setDrawColor(148, 163, 184); // slate-400
+      doc.setLineWidth(0.3);
+      // Card coordinates: width=100, height=150, centered at X=55, Y=40
+      doc.rect(53.5, 38.5, 103, 153, 'S');
+      doc.setLineDashPattern([], 0); // reset
+
+      // Scissor label
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(7);
+      doc.setTextColor(148, 163, 184);
+      doc.text("Cut along dashed lines to print & keep as a wallet card", 105, 36, { align: 'center' });
+
+      // --- GOLD PASS CARD (CR80/Vertical Badge Format: 100mm x 150mm) ---
+      // Draw rich gold-bronze fill
+      doc.setFillColor(235, 180, 44); // Gold Base (#EBB42C)
+      doc.roundedRect(55, 40, 100, 150, 8, 8, 'F');
+
+      // Draw premium dark-gold outline
+      doc.setDrawColor(148, 113, 23); // #947117
+      doc.setLineWidth(1.2);
+      doc.roundedRect(55, 40, 100, 150, 8, 8, 'S');
+
+      // --- CARD LOGO EMBLEM (Dynamic Vector Drawing) ---
+      // Outer light golden ring
+      doc.setFillColor(255, 243, 179); // #FFF3B3
+      doc.setDrawColor(84, 60, 1); // #543C01
+      doc.setLineWidth(0.4);
+      doc.circle(67, 51, 6.5, 'FD');
+
+      // Inner dashed ring
+      doc.setDrawColor(140, 102, 3);
+      doc.setLineDashPattern([0.5, 0.5], 0);
+      doc.circle(67, 51, 5.2, 'S');
+      doc.setLineDashPattern([], 0); // Reset
+
+      // Golden Ribbon banner overlapping emblem
+      doc.setFillColor(209, 161, 25); // #D1A119
+      doc.setDrawColor(84, 60, 1);
+      doc.roundedRect(60, 49.5, 14, 3.2, 0.5, 0.5, 'FD');
+
+      // Lettering inside emblem
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(4.5);
+      doc.setTextColor(84, 60, 1);
+      doc.text("MTC", 67, 51.8, { align: 'center' });
+
+      // Pass number and description headers
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(15, 23, 42); // slate-900
+      doc.text("PASS NO: " + pass.passNo, 116, 49, { align: 'center' });
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(6);
+      doc.setTextColor(30, 41, 59); // slate-800
+      doc.text("MONTHLY CONCESSION TRAVEL PASS", 116, 53.5, { align: 'center' });
+      
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(5.2);
+      doc.setTextColor(51, 65, 85); // slate-700
+      doc.text("Metropolitan Transport Corporation (Chennai) Ltd.", 116, 57, { align: 'center' });
+
+      // --- MIDDLE SECTION: INNER WHITE DISPLAY PANEL ---
+      // Rounded white frame
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(255, 255, 255);
+      doc.roundedRect(62, 62, 53, 80, 5, 5, 'FD');
+
+      // Golden Badge Seal overlapping white frame (Right-Middle)
+      doc.setFillColor(235, 180, 44); // Gold Fill
+      doc.setDrawColor(148, 113, 23); // Gold Outline
+      doc.setLineWidth(0.4);
+      doc.circle(115, 82, 8, 'FD');
+
+      // Seal inner ring
+      doc.setDrawColor(255, 243, 179);
+      doc.circle(115, 82, 6.8, 'S');
+
+      // Seal text
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(4);
+      doc.setTextColor(84, 60, 1);
+      doc.text("MONTHLY", 115, 81.5, { align: 'center' });
+      doc.text("₹1000", 115, 84.5, { align: 'center' });
+
+      // --- HOLDER PORTRAIT IMAGE OR SILHOUETTE ---
+      // Frame container for portrait
+      doc.setFillColor(248, 250, 252); // slate-50
+      doc.setDrawColor(226, 232, 240); // slate-200
+      doc.setLineWidth(0.5);
+      doc.roundedRect(72.5, 66, 32, 32, 4, 4, 'FD');
+
+      if (photoBase64) {
+        // Embed loaded portrait image
+        doc.addImage(photoBase64, 'JPEG', 73.5, 67, 30, 30);
+      } else {
+        // Draw highly polished vector silhouette
+        // Head circle
+        doc.setFillColor(203, 213, 225); // slate-300
+        doc.circle(88.5, 78, 4.5, 'F');
+        // Neck
+        doc.setFillColor(203, 213, 225);
+        doc.rect(87, 82, 3, 2.5, 'F');
+        // Shoulders/Body arc
+        doc.setFillColor(148, 163, 184); // slate-400
+        doc.ellipse(88.5, 91.5, 9, 5, 'F');
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(5.5);
+        doc.setTextColor(148, 163, 184);
+        doc.text("PORTRAIT PHOTO", 88.5, 96, { align: 'center' });
+      }
+
+      // --- HOLDER SPECIFICS (INSIDE WHITE PANEL) ---
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(15, 23, 42); // slate-900
+      doc.text(pass.name.toUpperCase(), 88.5, 104, { align: 'center' });
+
+      // Pass Type Badge
+      doc.setFillColor(240, 246, 255); // light blue bg
+      doc.roundedRect(71.5, 107.5, 34, 4.5, 1, 1, 'F');
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(5.5);
+      doc.setTextColor(29, 78, 216); // blue-700
+      doc.text((pass.type + " Monthly Pass").toUpperCase(), 88.5, 110.8, { align: 'center' });
+
+      // Pass Validity Details
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7.5);
+      doc.setTextColor(220, 38, 38); // red-600
+      doc.text("VALID UP TO: " + pass.validTo, 88.5, 118, { align: 'center' });
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(5.2);
+      doc.setTextColor(71, 85, 105); // slate-600
+      doc.text("Activated: " + pass.activatedAt, 88.5, 122.5, { align: 'center' });
+
+      // Official holographic-style watermark text
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(4.5);
+      doc.setTextColor(148, 163, 184); // slate-400
+      doc.text("DIGITAL SIGNATURE SECURE", 88.5, 128, { align: 'center' });
+      doc.text("★ MTC METRO PORTAL VERIFIED ★", 88.5, 131, { align: 'center' });
+
+      // --- BOTTOM SECTION: QR CODE & DIGITAL ATTRIBUTES ---
+      // Center the QR Code
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(255, 255, 255);
+      doc.roundedRect(91.5, 147.5, 25, 25, 3, 3, 'FD');
+
+      if (qrBase64) {
+        doc.addImage(qrBase64, 'PNG', 92.5, 148.5, 23, 23);
+      } else {
+        // Fallback QR simulation pattern
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(0.8);
+        doc.rect(93.5, 149.5, 21, 21, 'S');
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(5);
+        doc.setTextColor(0, 0, 0);
+        doc.text("[QR CODE]", 104, 161, { align: 'center' });
+      }
+
+      // Security guidelines & attributes (Left of QR)
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(6.5);
+      doc.setTextColor(255, 255, 255);
+      doc.text("SECURE DIGITAL BACKUP", 61, 155);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(5.5);
+      doc.setTextColor(241, 245, 249); // slate-100
+      doc.text("• Strictly Non-Transferable ID", 61, 159.5);
+      doc.text("• Valid inside Chennai limits", 61, 163.5);
+      doc.text("• Digital signature active", 61, 167.5);
+
+      // Active Pass Badge on card bottom
+      doc.setFillColor(16, 185, 129); // emerald-500
+      doc.roundedRect(61, 171.5, 16, 4.5, 0.8, 0.8, 'F');
+      
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(4);
+      doc.setTextColor(255, 255, 255);
+      doc.text("ACTIVE PASS", 69, 174.8, { align: 'center' });
+
+      // --- INSTRUCTIONS & DOCUMENT LEGAL FOOTER ---
+      doc.setDrawColor(203, 213, 225); // slate-300
+      doc.setLineWidth(0.4);
+      doc.line(20, 212, 190, 212);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9.5);
+      doc.setTextColor(30, 41, 59); // slate-800
+      doc.text("OFFLINE PORTAL INSTRUCTIONS & BACKUP VERIFICATION:", 20, 221);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.2);
+      doc.setTextColor(71, 85, 105); // slate-600
+      doc.text("1. Print this digital PDF file in high-quality scale (100% size) on heavy cardstock or A4 photo paper.", 20, 227.5);
+      doc.text("2. Carefully trim along the outer dashed cut lines (measuring exactly 100mm x 150mm card boundaries).", 20, 233.5);
+      doc.text("3. Fold and place the finished travel pass inside your pocket ID wallet or transparent cardholder sleeve.", 20, 239.5);
+      doc.text("4. Present this printed pass physically to ticket checkers, conductors, or smartgate inspectors when requested.", 20, 245.5);
+      doc.text("5. Transit inspectors can instantly verify pass authenticity by scanning the security QR code with any smartphone camera.", 20, 251.5);
+
+      // Footer signature
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(7.5);
+      doc.setTextColor(148, 163, 184); // slate-400
+      doc.text(
+        `Generated securely via Chennai One Metro Pass Portal on ${new Date().toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })} at ${new Date().toLocaleTimeString('en-US')}`,
+        105,
+        278,
+        { align: 'center' }
+      );
+
+      // Save pass
+      doc.save(`MTC_Transit_Pass_${pass.passNo}.pdf`);
+    } catch (err) {
+      console.error("Error generating PDF:", err);
+      alert("Failed to generate PDF backup. Please check your network and try again.");
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
+
 
   // Update clock every second to match the dynamic live verification clock
   useEffect(() => {
@@ -343,6 +631,26 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
         id="renew-pass-button"
       >
         Renew Pass
+      </button>
+
+      {/* Download Pass PDF Button */}
+      <button
+        onClick={handleDownloadPdf}
+        disabled={isGeneratingPdf}
+        className="w-full max-w-[380px] bg-amber-500 hover:bg-amber-400 disabled:opacity-75 text-slate-950 font-bold text-sm py-3.5 px-6 rounded-2xl text-center shadow-lg active:scale-[0.98] transition-all border border-amber-600/20 flex items-center justify-center gap-2 mt-3 cursor-pointer select-none"
+        id="download-pass-pdf-button"
+      >
+        {isGeneratingPdf ? (
+          <>
+            <Loader2 className="w-4 h-4 animate-spin text-slate-950" />
+            <span>Generating Secure PDF...</span>
+          </>
+        ) : (
+          <>
+            <Download className="w-4 h-4 text-slate-950" />
+            <span>Download Offline PDF Backup</span>
+          </>
+        )}
       </button>
 
       {/* Full screen blurred QR Modal */}
