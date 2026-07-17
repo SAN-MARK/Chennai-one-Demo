@@ -699,25 +699,7 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload, isOffline 
         Renew Pass
       </button>
 
-      {/* Download Pass PDF Button */}
-      <button
-        onClick={handleDownloadPdf}
-        disabled={isGeneratingPdf}
-        className="w-full max-w-[380px] bg-amber-500 hover:bg-amber-400 disabled:opacity-75 text-slate-950 font-bold text-sm py-3.5 px-6 rounded-2xl text-center shadow-lg active:scale-[0.98] transition-all border border-amber-600/20 flex items-center justify-center gap-2 mt-3 cursor-pointer select-none"
-        id="download-pass-pdf-button"
-      >
-        {isGeneratingPdf ? (
-          <>
-            <Loader2 className="w-4 h-4 animate-spin text-slate-950" />
-            <span>Generating Secure PDF...</span>
-          </>
-        ) : (
-          <>
-            <Download className="w-4 h-4 text-slate-950" />
-            <span>Download Offline PDF Backup</span>
-          </>
-        )}
-      </button>
+
 
       {/* Full screen blurred QR Modal */}
       <AnimatePresence>
