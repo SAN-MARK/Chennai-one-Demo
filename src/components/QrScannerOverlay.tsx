@@ -31,7 +31,7 @@ interface QrScannerOverlayProps {
   pass: MtcPass;
 }
 
-type ScannerScreenType = 'scanning' | 'result' | 'error';
+type ScannerScreenType = 'scanning' | 'success_flash' | 'result' | 'error';
 type ParsedType = 'pass' | 'url' | 'text';
 
 interface ParsedPassData {
@@ -153,12 +153,19 @@ export default function QrScannerOverlay({ isOpen, onClose, pass }: QrScannerOve
     setRawText(text);
     const parsed = parseQrContent(text);
     setQrResult(parsed);
-    setScreenState('result');
+    
+    // Trigger success flash and secure verification screen state first
+    setScreenState('success_flash');
 
     // Trigger subtle success haptic vibration if supported on device
     if (navigator.vibrate) {
       navigator.vibrate([100, 50, 100]);
     }
+
+    // Hold success flash for 1000ms, then transition to result screen
+    setTimeout(() => {
+      setScreenState('result');
+    }, 1000);
   };
 
   // Start the physical camera feed
@@ -380,35 +387,61 @@ export default function QrScannerOverlay({ isOpen, onClose, pass }: QrScannerOve
 
               {/* High-tech Centered Mask cutout using huge box shadow */}
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
-                <div 
-                  className="w-60 h-60 border-2 border-[#ff0055] rounded-[32px] relative overflow-hidden shadow-[0_0_0_9999px_rgba(10,10,14,0.7)]"
-                  style={{
-                    boxShadow: '0 0 0 9999px rgba(10,10,14,0.7), inset 0 0 15px rgba(255,0,85,0.2)'
-                  }}
-                >
-                  {/* Neon laser sweeps */}
+                {/* Active breathing outer pulse ring */}
+                <div className="relative">
                   <motion.div 
-                    initial={{ top: '4%' }}
-                    animate={{ top: '96%' }}
-                    transition={{ 
-                      repeat: Infinity, 
-                      repeatType: 'reverse', 
-                      duration: 1.6,
-                      ease: 'easeInOut'
+                    animate={{ 
+                      scale: [0.96, 1.05, 0.96],
+                      opacity: [0.2, 0.6, 0.2] 
                     }}
-                    className="absolute inset-x-0 h-[2.5px] bg-[#ff0055] shadow-[0_0_12px_#ff0055]"
+                    transition={{
+                      repeat: Infinity,
+                      duration: 2.2,
+                      ease: "easeInOut"
+                    }}
+                    className="absolute -inset-4 rounded-[40px] border border-[#ff0055]/40 blur-sm pointer-events-none"
                   />
+                  
+                  <div 
+                    className="w-60 h-60 border-2 border-[#ff0055] rounded-[32px] relative overflow-hidden shadow-[0_0_0_9999px_rgba(10,10,14,0.7)]"
+                    style={{
+                      boxShadow: '0 0 0 9999px rgba(10,10,14,0.7), inset 0 0 15px rgba(255,0,85,0.2)'
+                    }}
+                  >
+                    {/* Neon laser sweeps */}
+                    <motion.div 
+                      initial={{ top: '4%' }}
+                      animate={{ top: '96%' }}
+                      transition={{ 
+                        repeat: Infinity, 
+                        repeatType: 'reverse', 
+                        duration: 1.6,
+                        ease: 'easeInOut'
+                      }}
+                      className="absolute inset-x-0 h-[2.5px] bg-[#ff0055] shadow-[0_0_12px_#ff0055]"
+                    />
 
-                  {/* High contrast Gold corner brackets */}
-                  <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-amber-400 rounded-tl-[16px]" />
-                  <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-amber-400 rounded-tr-[16px]" />
-                  <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-amber-400 rounded-bl-[16px]" />
-                  <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-amber-400 rounded-br-[16px]" />
+                    {/* High contrast Gold corner brackets */}
+                    <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-amber-400 rounded-tl-[16px]" />
+                    <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-amber-400 rounded-tr-[16px]" />
+                    <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-amber-400 rounded-bl-[16px]" />
+                    <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-amber-400 rounded-br-[16px]" />
+                    
+                    {/* Dynamic scanning grid dots overlay (representing active scanner status) */}
+                    <div 
+                      className="absolute inset-0 opacity-[0.08] pointer-events-none"
+                      style={{
+                        backgroundImage: 'radial-gradient(#ff0055 10%, transparent 10%)',
+                        backgroundSize: '16px 16px'
+                      }}
+                    />
+                  </div>
                 </div>
 
                 <div className="mt-5 flex flex-col items-center justify-center gap-1">
-                  <p className="text-white text-[11px] font-black tracking-wider uppercase bg-slate-950/90 px-3.5 py-1.5 rounded-full border border-slate-800 shadow-lg">
-                    Align Code Inside Grid Frame
+                  <p className="text-white text-[11px] font-black tracking-wider uppercase bg-slate-950/90 px-3.5 py-1.5 rounded-full border border-slate-800 shadow-lg flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#ff0055] animate-ping" />
+                    <span>Align Code Inside Grid Frame</span>
                   </p>
                   <p className="text-[9px] text-slate-400 font-medium tracking-wide">Scanning is fully automated</p>
                 </div>
@@ -417,6 +450,89 @@ export default function QrScannerOverlay({ isOpen, onClose, pass }: QrScannerOve
               {flashlight && (
                 <div className="absolute inset-0 bg-white/5 pointer-events-none mix-blend-overlay z-10" />
               )}
+            </motion.div>
+          )}
+
+          {/* VIEWPORT S: SCAN SUCCESS FLASH AND VERIFICATION */}
+          {screenState === 'success_flash' && (
+            <motion.div
+              key="success-flash-viewport"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              className="absolute inset-0 rounded-[32px] overflow-hidden bg-slate-950 flex flex-col items-center justify-center p-6 border border-emerald-500/30 shadow-[0_0_50px_rgba(16,185,129,0.15)]"
+            >
+              {/* Confetti or particle ring */}
+              <div className="absolute inset-0 pointer-events-none opacity-20">
+                <div 
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage: 'radial-gradient(#10b981 10%, transparent 10%)',
+                    backgroundSize: '24px 24px'
+                  }}
+                />
+              </div>
+
+              {/* Glowing animated confirmation target */}
+              <div className="relative mb-6">
+                {/* Pulsating back rings */}
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0.5 }}
+                  animate={{ scale: 1.4, opacity: 0 }}
+                  transition={{ repeat: Infinity, duration: 1.2, ease: "easeOut" }}
+                  className="absolute inset-0 bg-emerald-500/20 rounded-full"
+                />
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0.8 }}
+                  animate={{ scale: 1.6, opacity: 0 }}
+                  transition={{ repeat: Infinity, duration: 1.5, ease: "easeOut", delay: 0.3 }}
+                  className="absolute inset-0 bg-emerald-500/10 rounded-full"
+                />
+
+                <motion.div
+                  initial={{ scale: 0.3, rotate: -45 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                  className="w-24 h-24 rounded-full bg-emerald-500/10 border-2 border-emerald-500 text-emerald-400 flex items-center justify-center relative z-10 shadow-[0_0_30px_rgba(16,185,129,0.3)]"
+                >
+                  <CheckCircle2 className="w-12 h-12 stroke-[2.5]" />
+                </motion.div>
+              </div>
+
+              {/* High-fidelity verification details */}
+              <div className="text-center space-y-2 z-10">
+                <motion.h3
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="text-xl font-display font-black text-white tracking-wide uppercase"
+                >
+                  Scan Successful!
+                </motion.h3>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-xs text-slate-400 max-w-[240px] leading-relaxed mx-auto font-sans"
+                >
+                  Cryptographic signature matching Chennai MTC Transit Authority ledger keys...
+                </motion.p>
+              </div>
+
+              {/* Micro-loading progress bar */}
+              <div className="w-48 h-1 bg-slate-900 rounded-full overflow-hidden mt-6 relative border border-slate-800">
+                <motion.div
+                  initial={{ left: '-100%' }}
+                  animate={{ left: '0%' }}
+                  transition={{ duration: 0.9, ease: "easeInOut" }}
+                  className="absolute inset-y-0 w-full bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_10px_#10b981]"
+                />
+              </div>
+
+              {/* Subtle status feed */}
+              <div className="mt-4 font-mono text-[9px] text-emerald-500/80 tracking-widest uppercase animate-pulse">
+                STATUS: DECIPHERING SECURE BLOCK
+              </div>
             </motion.div>
           )}
 
