@@ -18,6 +18,7 @@ import {
   RotateCcw, 
   QrCode, 
   Wifi, 
+  WifiOff,
   Battery, 
   Sliders, 
   Database,
@@ -60,6 +61,13 @@ export default function App() {
     return saved ? JSON.parse(saved) : INITIAL_PASS;
   });
   const [activeTab, setActiveTab] = useState<TabType>('passes');
+  const [isOffline, setIsOffline] = useState<boolean>(() => {
+    return localStorage.getItem('findback_offline') === 'true';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('findback_offline', isOffline ? 'true' : 'false');
+  }, [isOffline]);
 
   useEffect(() => {
     localStorage.setItem('findback_user', JSON.stringify(user));
@@ -295,6 +303,31 @@ export default function App() {
               </button>
             </div>
 
+            {/* Offline Simulation toggle */}
+            <button 
+              onClick={() => setIsOffline(prev => !prev)}
+              className={`w-full py-2.5 px-3 rounded-xl border text-left transition-all flex justify-between items-center cursor-pointer ${
+                isOffline 
+                  ? 'bg-rose-950/20 border-rose-900/40 text-rose-200 hover:bg-rose-950/30' 
+                  : 'bg-emerald-950/20 border-emerald-900/30 text-emerald-200 hover:bg-emerald-950/30'
+              }`}
+            >
+              <div>
+                <span className="text-[9px] text-slate-400 block font-bold uppercase">Network Simulator</span>
+                <span className="text-xs font-bold">
+                  {isOffline ? 'Offline Cache-First' : 'Online API Syncing'}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                {isOffline ? (
+                  <WifiOff className="w-4 h-4 text-rose-400 animate-pulse" />
+                ) : (
+                  <Wifi className="w-4 h-4 text-emerald-400" />
+                )}
+                <span className={`w-2 h-2 rounded-full ${isOffline ? 'bg-rose-500' : 'bg-emerald-500'}`} />
+              </div>
+            </button>
+
             <button 
               onClick={handleLogout}
               className="w-full mt-1.5 py-2 px-3 rounded-xl bg-rose-950/40 hover:bg-rose-950/60 border border-rose-900/40 text-left transition-all flex justify-between items-center cursor-pointer"
@@ -330,12 +363,26 @@ export default function App() {
             id="smartphone-bezel-frame"
           >
             {/* Top Smartphone Camera Notch element (Mock Bezel details for realism) */}
-            <div className="absolute top-0 inset-x-0 h-7 bg-slate-950 z-50 flex justify-between items-center px-6 text-xs pointer-events-none select-none">
-              <span className="font-sans font-bold text-slate-400 text-[11px]"></span>
+            <div className="absolute top-0 inset-x-0 h-7 bg-slate-950 z-50 flex justify-between items-center px-6 text-xs select-none">
+              <span className="font-sans font-bold text-slate-400 text-[11px] pointer-events-none">{phoneClock}</span>
               {/* Central Camera pill */}
-              <div className="hidden md:block w-24 h-4 bg-black rounded-full mx-auto border border-neutral-900 absolute left-1/2 -translate-x-1/2 top-1.5" />
-              <div className="flex items-center gap-1.5 text-slate-400">
-              </div>
+              <div className="hidden md:block w-24 h-4 bg-black rounded-full mx-auto border border-neutral-900 absolute left-1/2 -translate-x-1/2 top-1.5 pointer-events-none" />
+              <button 
+                onClick={() => setIsOffline(prev => !prev)}
+                className="flex items-center gap-1.5 text-slate-400 hover:text-white transition-all cursor-pointer bg-transparent border-none outline-none"
+                title="Toggle Online/Offline Status"
+              >
+                {isOffline ? (
+                  <span className="flex items-center gap-1 bg-rose-500/10 border border-rose-500/25 px-1.5 py-0.5 rounded text-[8.5px] font-black text-rose-400 animate-pulse uppercase">
+                    <WifiOff className="w-2.5 h-2.5" /> Offline
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/25 px-1.5 py-0.5 rounded text-[8.5px] font-black text-emerald-400 uppercase">
+                    <Wifi className="w-2.5 h-2.5" /> Online
+                  </span>
+                )}
+                <span className="text-[10px]">🔋</span>
+              </button>
             </div>
 
             {/* Smart Screen Canvas Body */}
@@ -445,7 +492,12 @@ export default function App() {
                         <CheckCircle2 className="w-5 h-5 text-emerald-300 shrink-0" />
                         <div>
                           <p className="text-xs font-bold font-sans">Pass Renewal Activated!</p>
-                          <p className="text-[9px] text-emerald-100 opacity-90 leading-none mt-0.5">Your pass was securely updated inside the active database ledger.</p>
+                          <p className="text-[9px] text-emerald-100 opacity-90 leading-none mt-0.5">
+                            {isOffline 
+                              ? "Your pass was securely saved inside the local offline cache database." 
+                              : "Your pass was securely updated inside the active database ledger."
+                            }
+                          </p>
                         </div>
                       </motion.div>
                     )}
@@ -636,6 +688,7 @@ export default function App() {
                             pass={pass} 
                             onRenewClick={handleRenewPass}
                             onPhotoUpload={(url) => setPass(prev => ({ ...prev, photoUrl: url }))}
+                            isOffline={isOffline}
                           />
                         </div>
                       </motion.div>
@@ -691,6 +744,7 @@ export default function App() {
                           balance={walletBalance} 
                           transactions={walletTransactions} 
                           pass={pass} 
+                          isOffline={isOffline}
                           onTopUp={(amount) => {
                             setWalletBalance(prev => prev + amount);
                             const newTx: WalletTransaction = {

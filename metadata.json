@@ -1,6 +1,6 @@
 {
   "name": "Chennai MTC Bus Pass Hub",
   "description": "An interactive, highly polished mobile simulator for Chennai's Metropolitan Transport Corporation (MTC) Bus Passes. Generate, manage, and renew passes with dynamic live security clocks and QR validation.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

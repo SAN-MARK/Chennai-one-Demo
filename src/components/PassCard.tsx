@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MtcPass } from '../types';
-import { ShieldCheck, Calendar, Info, QrCode, Camera, Upload, Download, Loader2 } from 'lucide-react';
+import { ShieldCheck, Calendar, Info, QrCode, Camera, Upload, Download, Loader2, Wifi, WifiOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { jsPDF } from 'jspdf';
 
@@ -104,13 +104,59 @@ const MtcLogoSvg = () => (
   </svg>
 );
 
+const OfflineQrSvg = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 100 100" className={className} fill="currentColor">
+    {/* Finder Pattern Top-Left */}
+    <rect x="0" y="0" width="30" height="30" />
+    <rect x="5" y="5" width="20" height="20" fill="white" />
+    <rect x="10" y="10" width="10" height="10" />
+
+    {/* Finder Pattern Top-Right */}
+    <rect x="70" y="0" width="30" height="30" />
+    <rect x="75" y="5" width="20" height="20" fill="white" />
+    <rect x="80" y="10" width="10" height="10" />
+
+    {/* Finder Pattern Bottom-Left */}
+    <rect x="0" y="70" width="30" height="30" />
+    <rect x="5" y="75" width="20" height="20" fill="white" />
+    <rect x="10" y="80" width="10" height="10" />
+
+    {/* Random grid squares simulating a real QR code matrix */}
+    <rect x="40" y="5" width="10" height="10" />
+    <rect x="55" y="0" width="10" height="5" />
+    <rect x="50" y="15" width="15" height="10" />
+    <rect x="35" y="20" width="5" height="15" />
+    
+    <rect x="40" y="40" width="10" height="10" />
+    <rect x="35" y="55" width="15" height="5" />
+    <rect x="55" y="35" width="10" height="15" />
+    <rect x="45" y="50" width="10" height="10" />
+
+    <rect x="70" y="40" width="15" height="10" />
+    <rect x="90" y="35" width="10" height="15" />
+    <rect x="80" y="55" width="10" height="10" />
+
+    <rect x="5" y="40" width="15" height="10" />
+    <rect x="25" y="35" width="10" height="15" />
+    <rect x="15" y="55" width="10" height="10" />
+
+    <rect x="70" y="70" width="10" height="10" />
+    <rect x="85" y="75" width="15" height="10" />
+    <rect x="75" y="90" width="10" height="10" />
+    <rect x="90" y="85" width="10" height="15" />
+    <rect x="40" y="75" width="15" height="10" />
+    <rect x="55" y="85" width="10" height="15" />
+  </svg>
+);
+
 interface PassCardProps {
   pass: MtcPass;
   onRenewClick: () => void;
   onPhotoUpload?: (url: string) => void;
+  isOffline?: boolean;
 }
 
-export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCardProps) {
+export default function PassCard({ pass, onRenewClick, onPhotoUpload, isOffline = false }: PassCardProps) {
   const [liveTime, setLiveTime] = useState<Date>(new Date());
   const [isQrZoomed, setIsQrZoomed] = useState<boolean>(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState<boolean>(false);
@@ -429,6 +475,22 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
 
   return (
     <div className="flex flex-col items-center w-full select-none" id="mtc-pass-card-container">
+      {/* Offline cache notice banner */}
+      {isOffline && (
+        <div className="w-full max-w-[420px] mb-3 bg-amber-500/10 border border-amber-500/20 rounded-2xl p-3 flex items-center justify-between text-xs text-amber-200">
+          <div className="flex items-center gap-2">
+            <WifiOff className="w-4 h-4 text-amber-400 animate-pulse" />
+            <div>
+              <p className="font-extrabold uppercase text-[9.5px] tracking-wider text-amber-300">Offline Cache Active</p>
+              <p className="text-[10px] text-amber-100/75 leading-tight">Displaying saved pass data from local cache.</p>
+            </div>
+          </div>
+          <span className="text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full uppercase border border-amber-500/30">
+            Local Cache
+          </span>
+        </div>
+      )}
+
       {/* The Gold Card Wrapper */}
       <div 
         className="relative w-full max-w-[420px] aspect-[1/1.5] rounded-[40px] p-6 shadow-2xl flex flex-col justify-between overflow-hidden"
@@ -579,12 +641,16 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
             id="validation-matrix-badge"
             title="Tap to verify/zoom QR Code"
           >
-            <img 
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(`MTC-PASS-VERIFIED\nNo: ${pass.passNo}\nName: ${pass.name}\nType: ${pass.type}\nValid To: ${pass.validTo}`)}`} 
-              alt="Mini QR" 
-              className="w-full h-full object-contain"
-              referrerPolicy="no-referrer"
-            />
+            {isOffline ? (
+              <OfflineQrSvg className="w-full h-full text-slate-900" />
+            ) : (
+              <img 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(`MTC-PASS-VERIFIED\nNo: ${pass.passNo}\nName: ${pass.name}\nType: ${pass.type}\nValid To: ${pass.validTo}`)}`} 
+                alt="Mini QR" 
+                className="w-full h-full object-contain"
+                referrerPolicy="no-referrer"
+              />
+            )}
           </button>
         </div>
 
@@ -691,12 +757,16 @@ export default function PassCard({ pass, onRenewClick, onPhotoUpload }: PassCard
 
               {/* Large High-Res QR Code */}
               <div className="relative bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-inner w-[240px] h-[240px] flex items-center justify-center">
-                <img 
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(`MTC-PASS-VERIFIED\nNo: ${pass.passNo}\nName: ${pass.name}\nType: ${pass.type}\nValid To: ${pass.validTo}\nVerified At: ${formatMonthDay(liveTime)} ${formatTime(liveTime)}`)}`}
-                  alt="MTC Pass QR Code" 
-                  className="w-full h-full object-contain"
-                  referrerPolicy="no-referrer"
-                />
+                {isOffline ? (
+                  <OfflineQrSvg className="w-full h-full text-slate-900" />
+                ) : (
+                  <img 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(`MTC-PASS-VERIFIED\nNo: ${pass.passNo}\nName: ${pass.name}\nType: ${pass.type}\nValid To: ${pass.validTo}\nVerified At: ${formatMonthDay(liveTime)} ${formatTime(liveTime)}`)}`}
+                    alt="MTC Pass QR Code" 
+                    className="w-full h-full object-contain"
+                    referrerPolicy="no-referrer"
+                  />
+                )}
               </div>
 
               {/* Details List */}

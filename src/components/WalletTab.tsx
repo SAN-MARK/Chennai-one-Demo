@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Wallet, Plus, ArrowUpRight, ArrowDownRight, Info, Coins, Sparkles, AlertCircle } from 'lucide-react';
+import { Wallet, Plus, ArrowUpRight, ArrowDownRight, Info, Coins, Sparkles, AlertCircle, Wifi, WifiOff } from 'lucide-react';
 import { WalletTransaction, MtcPass } from '../types';
 
 interface WalletTabProps {
   balance: number;
   transactions: WalletTransaction[];
   pass: MtcPass;
+  isOffline?: boolean;
   onTopUp: (amount: number) => void;
 }
 
-export default function WalletTab({ balance, transactions, pass, onTopUp }: WalletTabProps) {
+export default function WalletTab({ balance, transactions, pass, isOffline = false, onTopUp }: WalletTabProps) {
   const [topUpAmount, setTopUpAmount] = useState<string>('500');
   const [isTopUpLoading, setIsTopUpLoading] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -31,7 +32,11 @@ export default function WalletTab({ balance, transactions, pass, onTopUp }: Wall
     setTimeout(() => {
       onTopUp(parsed);
       setIsTopUpLoading(false);
-      setSuccessMessage(`Successfully added ₹${parsed.toLocaleString('en-IN')} to your e-wallet!`);
+      if (isOffline) {
+        setSuccessMessage(`Offline Top Up: Securely saved ₹${parsed.toLocaleString('en-IN')} to local offline cache!`);
+      } else {
+        setSuccessMessage(`Successfully added ₹${parsed.toLocaleString('en-IN')} to your e-wallet!`);
+      }
       setTimeout(() => setSuccessMessage(null), 3500);
     }, 800);
   };
@@ -52,6 +57,22 @@ export default function WalletTab({ balance, transactions, pass, onTopUp }: Wall
           <Wallet className="w-4 h-4 text-[#ff0055]" />
         </div>
       </div>
+
+      {/* Offline cache notice banner */}
+      {isOffline && (
+        <div className="w-full bg-amber-500/10 border border-amber-500/20 rounded-2xl p-3 flex items-center justify-between text-xs text-amber-900">
+          <div className="flex items-center gap-2">
+            <WifiOff className="w-4 h-4 text-amber-600 animate-pulse" />
+            <div>
+              <p className="font-extrabold uppercase text-[9.5px] tracking-wider text-amber-800">Offline Cache Active</p>
+              <p className="text-[10px] text-slate-600 leading-tight">Displaying wallet balance from local cache.</p>
+            </div>
+          </div>
+          <span className="text-[9px] font-mono font-bold bg-amber-500/20 text-amber-700 px-2 py-0.5 rounded-full uppercase border border-amber-500/30">
+            Local Cache
+          </span>
+        </div>
+      )}
 
       {/* WALLET BALANCE HERO CARD (Classic Slate Dark Theme Matching) */}
       <div className="bg-slate-900 text-white rounded-3xl p-5 border border-slate-800 shadow-md relative overflow-hidden">
