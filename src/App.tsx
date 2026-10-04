@@ -42,7 +42,6 @@ import ProfileTab from './components/ProfileTab';
 import HistoryLogs from './components/HistoryLogs';
 import HelpSupport from './components/HelpSupport';
 import WalletTab from './components/WalletTab';
-import QrScannerOverlay from './components/QrScannerOverlay';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
@@ -785,14 +784,6 @@ export default function App() {
                         <div className="flex items-center justify-between pb-4 shrink-0" id="mtc-passes-header">
                           <h1 className="text-2xl font-display font-black text-white" id="passes-screen-title">Passes</h1>
                           <div className="flex gap-2">
-                            {/* QR Scanner Button */}
-                            <button 
-                              onClick={() => setShowScanner(true)}
-                              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#ff0055] hover:bg-[#db0048] active:scale-95 transition-all text-xs font-bold rounded-full text-white border border-[#ff0055]/20 shadow-md cursor-pointer select-none"
-                              id="btn-scan-qr"
-                            >
-                              <QrCode className="w-3.5 h-3.5" /> Scan QR
-                            </button>
                             {/* Help Button */}
                             <button 
                               onClick={() => setShowHelp(true)}
@@ -899,19 +890,6 @@ export default function App() {
 
                   {/* PERSISTENT STICKY BOTTOM UTILITY NAVIGATION BAR (Matching Screenshots 5, 6, 7) */}
                   <div className="relative border-t border-slate-200 bg-white z-40 select-none">
-                    {/* Floating Center "BUS QR" Button (Visible on Home Screen - Screenshot 5) */}
-                    {activeTab === 'home' && (
-                      <div className="absolute -top-7 left-1/2 -translate-x-1/2 z-50">
-                        <button 
-                          onClick={() => setShowScanner(true)}
-                          className="bg-[#0052cc] hover:bg-[#0043b3] text-white px-4 py-2.5 rounded-2xl shadow-lg flex flex-col items-center justify-center border-2 border-white cursor-pointer active:scale-95 transition-all"
-                        >
-                          <QrCode className="w-5 h-5 text-white stroke-[2.5]" />
-                          <span className="text-[8px] font-black tracking-wider uppercase mt-0.5">BUS QR</span>
-                        </button>
-                      </div>
-                    )}
-
                     <div className="h-16 flex justify-around items-center px-2" id="sticky-bottom-nav">
                       {/* 1. Home button */}
                       <button 
@@ -1021,13 +999,6 @@ export default function App() {
                         <HelpSupport onClose={() => setShowHelp(false)} />
                       </motion.div>
                     )}
-
-                    {/* QR Scanner Overlay */}
-                    <QrScannerOverlay 
-                      isOpen={showScanner} 
-                      onClose={() => setShowScanner(false)} 
-                      pass={pass} 
-                    />
 
                     {/* 4. Renew Pass Dialogue Box Modal */}
                     {showRenewDialog && (
