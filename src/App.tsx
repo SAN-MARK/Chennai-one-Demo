@@ -540,7 +540,7 @@ export default function App() {
                     id="active-screen-scroll-container"
                   >
                     
-                    {/* 1. HOME SCREEN TAB (Exact match of Image 1) */}
+                    {/* 1. HOME SCREEN TAB */}
                     {activeTab === 'home' && (
                       <motion.div 
                         initial={{ opacity: 0 }}
@@ -552,13 +552,12 @@ export default function App() {
                             if (cat === 'Bus') setActiveTab('passes');
                             else setActiveTab('ticket');
                           }}
-                          onOpenQrScanner={() => setShowScanner(true)}
                           onNavigateToTab={(tab) => setActiveTab(tab)}
                         />
                       </motion.div>
                     )}
 
-                    {/* 2. PASSES SCREEN TAB */}
+                    {/* 2. PASSES SCREEN TAB (CLASSIC MTC BUS PASS UI) */}
                     {activeTab === 'passes' && (
                       <motion.div 
                         initial={{ opacity: 0, scale: 0.98 }}
@@ -569,25 +568,17 @@ export default function App() {
                         <div className="flex items-center justify-between pb-4 shrink-0" id="mtc-passes-header">
                           <h1 className="text-2xl font-display font-black text-white" id="passes-screen-title">Passes</h1>
                           <div className="flex gap-2">
-                            {/* QR Scanner Button */}
-                            <button 
-                              onClick={() => setShowScanner(true)}
-                              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#ff0055] hover:bg-[#db0048] active:scale-95 transition-all text-xs font-bold rounded-full text-white border border-[#ff0055]/20 shadow-md cursor-pointer select-none"
-                              id="btn-scan-qr"
-                            >
-                              <QrCode className="w-3.5 h-3.5" /> Scan QR
-                            </button>
                             {/* Help Button */}
                             <button 
                               onClick={() => setShowHelp(true)}
-                              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#222222] hover:bg-[#333333] active:scale-95 transition-all text-xs font-bold rounded-full text-white border border-neutral-800"
+                              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#222222] hover:bg-[#333333] active:scale-95 transition-all text-xs font-bold rounded-full text-white border border-neutral-800 cursor-pointer"
                             >
                               <Phone className="w-3.5 h-3.5" /> Help
                             </button>
                             {/* History Button */}
                             <button 
                               onClick={() => setShowHistory(true)}
-                              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#222222] hover:bg-[#333333] active:scale-95 transition-all text-xs font-bold rounded-full text-white border border-neutral-800"
+                              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#222222] hover:bg-[#333333] active:scale-95 transition-all text-xs font-bold rounded-full text-white border border-neutral-800 cursor-pointer"
                             >
                               <Clock className="w-3.5 h-3.5" /> History
                             </button>
@@ -602,7 +593,7 @@ export default function App() {
                           </div>
                         </div>
 
-                        {/* THE CORE PASS CARD WITH LIVE TIME AND DETAILED VISUALS */}
+                        {/* THE CLASSIC MTC BUS PASS CARD WITH LIVE TIME, HOLOGRAM & PHOTO */}
                         <div className="flex-grow flex items-center justify-center">
                           <PassCard 
                             pass={pass} 
@@ -758,17 +749,6 @@ export default function App() {
                       <User className="w-5 h-5 stroke-[2.2]" />
                       <span className="text-[10px] font-sans font-bold mt-0.5">Profile</span>
                     </button>
-
-                    {/* FLOATING BLUE "BUS QR" BUTTON (Appears when on Home tab or overlay) */}
-                    {activeTab === 'home' && (
-                      <button 
-                        onClick={() => setShowScanner(true)}
-                        className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#0066ff] hover:bg-blue-600 text-white rounded-2xl px-4 py-2.5 shadow-lg flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-all cursor-pointer border-2 border-white"
-                      >
-                        <QrCode className="w-5 h-5 text-white stroke-[2.5]" />
-                        <span className="text-[9px] font-black tracking-wider uppercase">BUS QR</span>
-                      </button>
-                    )}
                   </div>
 
                   {/* OVERLAYS & DRAWER COMPONENTS */}
@@ -817,13 +797,6 @@ export default function App() {
                         <HelpSupport onClose={() => setShowHelp(false)} />
                       </motion.div>
                     )}
-
-                    {/* QR Scanner Overlay */}
-                    <QrScannerOverlay 
-                      isOpen={showScanner} 
-                      onClose={() => setShowScanner(false)} 
-                      pass={pass} 
-                    />
 
                     {/* 4. Renew Pass Dialogue Box Modal */}
                     {showRenewDialog && (

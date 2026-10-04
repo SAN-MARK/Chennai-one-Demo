@@ -5,11 +5,10 @@ import LiveMap from './LiveMap';
 
 interface HomePageProps {
   onSelectCategory: (category: string) => void;
-  onOpenQrScanner: () => void;
   onNavigateToTab: (tab: any) => void;
 }
 
-export default function HomePage({ onSelectCategory, onOpenQrScanner, onNavigateToTab }: HomePageProps) {
+export default function HomePage({ onSelectCategory, onNavigateToTab }: HomePageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isBusToggleOn, setIsBusToggleOn] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('Bus');
