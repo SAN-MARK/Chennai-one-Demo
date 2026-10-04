@@ -1,139 +1,194 @@
 import React, { useState } from 'react';
-import { Bus, ArrowDownRight, Ticket as TicketIcon, Clock, Plus, QrCode } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { Bus, ArrowDownRight, Plus, X, ArrowLeftRight, CheckCircle2 } from 'lucide-react';
 
-interface PastTicket {
+interface TicketItem {
   id: string;
+  category: string;
   source: string;
   destination: string;
-  amount: number;
+  price: number;
   date: string;
   time: string;
-  status: 'Expired' | 'Active';
+  status: string;
 }
 
-const PAST_TICKETS_DATA: PastTicket[] = [
+const PAST_TICKETS_DATA: TicketItem[] = [
   {
     id: 'TKT-101',
+    category: 'BUS',
     source: 'SHOLINGANALLUR P.U.OFFICE',
     destination: 'PUTHUNAGAR',
-    amount: 15,
+    price: 15,
     date: 'Jul 18, 2026',
     time: '3:50 PM',
     status: 'Expired'
   },
   {
     id: 'TKT-102',
+    category: 'BUS',
     source: 'VELACHERY',
     destination: 'GURU NANAK COLLEGE',
-    amount: 33,
+    price: 33,
     date: 'Jun 17, 2026',
     time: '10:01 AM',
     status: 'Expired'
   },
   {
     id: 'TKT-103',
+    category: 'BUS',
     source: 'Tambaram West Bus Stand',
     destination: 'Sithalapakkam',
-    amount: 25,
+    price: 25,
     date: 'Apr 28, 2026',
     time: '2:24 PM',
     status: 'Expired'
   },
   {
     id: 'TKT-104',
+    category: 'BUS',
     source: 'CHITHALAPAKKAM JUNCTION',
     destination: 'Sithalapakkam',
-    amount: 5,
+    price: 5,
     date: 'Mar 22, 2026',
     time: '6:58 PM',
     status: 'Expired'
   },
   {
     id: 'TKT-105',
+    category: 'BUS',
     source: 'Guru Nanak College',
     destination: 'CHITHALAPAKKAM JUNCTION',
-    amount: 10,
-    date: 'Feb 14, 2026',
-    time: '8:15 AM',
+    price: 10,
+    date: 'Feb 12, 2026',
+    time: '11:15 AM',
     status: 'Expired'
   }
 ];
 
 export default function TicketSimulator() {
-  const [selectedTicket, setSelectedTicket] = useState<PastTicket | null>(null);
+  const [ticketsList, setTicketsList] = useState<TicketItem[]>(PAST_TICKETS_DATA);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [newSource, setNewSource] = useState('Broadway Terminal');
+  const [newDestination, setNewDestination] = useState('Alandur Metro Station');
+  const [newPrice, setNewPrice] = useState('15');
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  const handleBookTicket = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newSource || !newDestination) return;
+
+    const newTicket: TicketItem = {
+      id: `TKT-${Math.floor(100 + Math.random() * 900)}`,
+      category: 'BUS',
+      source: newSource.toUpperCase(),
+      destination: newDestination.toUpperCase(),
+      price: Number(newPrice) || 15,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+      status: 'Active'
+    };
+
+    setTicketsList([newTicket, ...ticketsList]);
+    setShowBookingModal(false);
+    setToastMsg('Ticket booked successfully! Valid for today.');
+    setTimeout(() => setToastMsg(null), 3000);
+  };
 
   return (
-    <div className="flex flex-col h-full bg-[#f8f9fa] text-slate-800 p-4 overflow-y-auto no-scrollbar" id="past-tickets-screen">
+    <div className="flex flex-col min-h-full bg-[#f8f9fa] text-slate-800 p-4 font-sans select-none pb-24 overflow-y-auto no-scrollbar">
       
-      {/* Screen Title (Matching Image 6) */}
-      <div className="py-2 mb-3 text-center shrink-0">
-        <h1 className="text-lg font-sans font-extrabold text-slate-700 tracking-tight">
+      {/* Toast Alert */}
+      {toastMsg && (
+        <div className="fixed top-12 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-xl z-50 flex items-center gap-2 animate-[bounce_0.5s_ease]">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <span>{toastMsg}</span>
+        </div>
+      )}
+
+      {/* Screen Title matching Image 2 screenshot */}
+      <div className="flex items-center justify-between my-2">
+        <h2 className="text-base font-bold text-slate-700 tracking-tight mx-auto text-center">
           Past Tickets
-        </h1>
+        </h2>
+        <button 
+          onClick={() => setShowBookingModal(true)}
+          className="absolute right-4 p-1.5 rounded-full bg-[#e60026] text-white hover:bg-red-700 shadow-sm text-xs font-bold flex items-center gap-1 px-3 cursor-pointer"
+        >
+          <Plus className="w-3.5 h-3.5" /> Book
+        </button>
       </div>
 
-      {/* Ticket List (Matching Image 6 layout) */}
-      <div className="space-y-3 pb-8">
-        {PAST_TICKETS_DATA.map((tkt) => (
+      {/* Vertical List of Ticket Cards matching Image 2 screenshot */}
+      <div className="space-y-3 mt-3">
+        {ticketsList.map((tkt) => (
           <div 
             key={tkt.id}
-            onClick={() => setSelectedTicket(tkt)}
-            className="bg-white rounded-2xl p-4 shadow-xs border border-slate-100 hover:border-slate-200 transition-all cursor-pointer relative overflow-hidden"
+            className="bg-white rounded-2xl p-4 shadow-2xs border border-slate-100 flex flex-col justify-between hover:shadow-xs transition-shadow"
           >
-            <div className="flex items-start justify-between gap-3">
+            {/* Top row: Bus 3D Icon + Route info + Price */}
+            <div className="flex items-start justify-between gap-2">
               
-              {/* Left Side: 3D White Bus Illustration + Info */}
+              {/* Left Side: 3D Bus Illustration & Route details */}
               <div className="flex items-start gap-3">
-                
-                {/* 3D Bus Graphic representation */}
-                <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 shrink-0">
-                  <svg viewBox="0 0 64 64" className="w-9 h-9 text-slate-400">
-                    <rect x="8" y="16" width="48" height="32" rx="6" fill="#e2e8f0" stroke="#cbd5e1" strokeWidth="2" />
-                    <rect x="14" y="22" width="10" height="12" rx="2" fill="#94a3b8" />
-                    <rect x="28" y="22" width="10" height="12" rx="2" fill="#94a3b8" />
-                    <rect x="42" y="22" width="10" height="12" rx="2" fill="#94a3b8" />
-                    <circle cx="18" cy="48" r="4" fill="#475569" />
-                    <circle cx="46" cy="48" r="4" fill="#475569" />
+                {/* 3D Bus graphic SVG */}
+                <div className="w-14 h-11 shrink-0 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-center p-1">
+                  <svg viewBox="0 0 100 70" className="w-full h-full text-slate-400 fill-current drop-shadow-xs">
+                    {/* Isometric bus roof & body */}
+                    <path d="M 15 25 L 45 10 L 85 20 L 55 35 Z" fill="#e2e8f0" />
+                    <path d="M 15 25 L 55 35 L 55 55 L 15 45 Z" fill="#cbd5e1" />
+                    <path d="M 55 35 L 85 20 L 85 40 L 55 55 Z" fill="#94a3b8" />
+                    {/* Windows */}
+                    <path d="M 20 30 L 32 26 L 32 36 L 20 38 Z" fill="#64748b" />
+                    <path d="M 36 25 L 48 21 L 48 31 L 36 34 Z" fill="#64748b" />
+                    {/* Wheels */}
+                    <circle cx="28" cy="46" r="5" fill="#334155" />
+                    <circle cx="70" cy="42" r="5" fill="#334155" />
                   </svg>
                 </div>
 
-                {/* Route details */}
-                <div className="flex flex-col">
-                  {/* Yellow BUS Badge */}
-                  <div className="inline-flex items-center gap-1 bg-[#fff8e1] text-[#f57f17] px-2 py-0.5 rounded-full text-[9px] font-black tracking-wide uppercase w-fit mb-1.5 border border-[#ffe082]/50">
+                {/* Category tag & Route names */}
+                <div>
+                  {/* Category Pill */}
+                  <div className="bg-[#fef9c3] text-[#ca8a04] text-[9.5px] font-black uppercase px-2 py-0.5 rounded-md inline-flex items-center gap-1 mb-1.5">
                     <Bus className="w-2.5 h-2.5 fill-current" />
-                    <span>BUS</span>
+                    <span>{tkt.category}</span>
                   </div>
 
-                  {/* Origin */}
-                  <p className="text-xs font-sans font-bold text-slate-800 uppercase tracking-tight leading-tight">
+                  {/* Origin Station */}
+                  <h3 className="text-xs font-black text-slate-800 tracking-tight uppercase leading-snug">
                     {tkt.source}
-                  </p>
+                  </h3>
 
-                  {/* Destination with arrow */}
-                  <div className="flex items-center gap-1 text-xs font-sans font-bold text-slate-600 uppercase tracking-tight mt-0.5">
-                    <ArrowDownRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  {/* Downward arrow & Destination Station */}
+                  <p className="text-xs font-black text-slate-600 tracking-tight uppercase flex items-center gap-1 mt-0.5">
+                    <span className="text-slate-400 text-sm font-bold">↘</span>
                     <span>{tkt.destination}</span>
-                  </div>
+                  </p>
                 </div>
               </div>
 
-              {/* Right Side: Fare Amount */}
-              <div className="text-right shrink-0">
-                <span className="text-xl font-sans font-black text-slate-800 font-mono tracking-tight">
-                  ₹{tkt.amount}
+              {/* Right Side: Bold Fare Price */}
+              <div className="shrink-0 text-right">
+                <span className="text-xl font-black text-slate-800 tracking-tight">
+                  ₹{tkt.price}
                 </span>
               </div>
             </div>
 
             {/* Dashed Separator Line */}
-            <div className="w-full border-t border-dashed border-slate-200 my-3" />
+            <div className="border-b border-dashed border-slate-200 my-3" />
 
             {/* Bottom Row: Date/Time + Status Badge */}
-            <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
-              <span>{tkt.date} · {tkt.time}</span>
-              <span className="bg-slate-100 text-slate-500 text-[10px] font-bold px-2.5 py-0.5 rounded-md uppercase">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-slate-400 font-medium text-[11px]">
+                {tkt.date} • {tkt.time}
+              </span>
+
+              <span className={`px-3 py-0.5 rounded-md font-bold text-[11px] ${
+                tkt.status === 'Active' 
+                  ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
+                  : 'bg-[#f1f5f9] text-[#94a3b8]'
+              }`}>
                 {tkt.status}
               </span>
             </div>
@@ -141,63 +196,70 @@ export default function TicketSimulator() {
         ))}
       </div>
 
-      {/* Ticket Details Modal */}
-      <AnimatePresence>
-        {selectedTicket && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedTicket(null)}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs cursor-pointer"
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-3xl p-5 max-w-[320px] w-full shadow-2xl text-slate-900 border border-slate-100"
-            >
-              <div className="text-center mb-4">
-                <div className="inline-flex items-center gap-1 bg-[#fff8e1] text-[#f57f17] px-3 py-1 rounded-full text-xs font-black uppercase mb-1">
-                  <Bus className="w-3.5 h-3.5" /> MTC Ticket Receipt
-                </div>
-                <h3 className="text-base font-bold text-slate-800">Unified Ticket Receipt</h3>
-              </div>
-
-              <div className="bg-slate-50 p-3 rounded-2xl space-y-2 text-xs mb-4 border border-slate-100">
-                <div className="flex justify-between">
-                  <span className="text-slate-400 font-bold uppercase text-[10px]">TICKET ID</span>
-                  <span className="font-mono font-bold text-slate-800">{selectedTicket.id}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400 font-bold uppercase text-[10px]">ORIGIN</span>
-                  <span className="font-bold text-slate-800 text-right">{selectedTicket.source}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400 font-bold uppercase text-[10px]">DESTINATION</span>
-                  <span className="font-bold text-slate-800 text-right">{selectedTicket.destination}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400 font-bold uppercase text-[10px]">DATE & TIME</span>
-                  <span className="font-mono text-slate-700">{selectedTicket.date} · {selectedTicket.time}</span>
-                </div>
-                <div className="flex justify-between border-t border-slate-200 pt-2">
-                  <span className="text-slate-400 font-bold uppercase text-[10px]">TOTAL FARE</span>
-                  <span className="font-mono font-black text-slate-900 text-sm">₹{selectedTicket.amount}.00</span>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setSelectedTicket(null)}
-                className="w-full py-3 bg-slate-900 text-white font-bold text-xs rounded-xl hover:bg-slate-800 transition-all uppercase tracking-wider"
+      {/* Booking Modal */}
+      {showBookingModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-5 w-full max-w-sm space-y-4 text-slate-900 shadow-2xl animate-[fadeIn_0.2s_ease]">
+            <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+              <h3 className="text-base font-bold text-slate-900">Book New Bus Ticket</h3>
+              <button 
+                onClick={() => setShowBookingModal(false)}
+                className="p-1 rounded-full text-slate-400 hover:text-slate-700 bg-slate-100"
               >
-                Close Receipt
+                <X className="w-4 h-4" />
               </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+
+            <form onSubmit={handleBookTicket} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">From Boarding Stop</label>
+                <input 
+                  type="text" 
+                  value={newSource}
+                  onChange={(e) => setNewSource(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#e60026]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">To Destination Stop</label>
+                <input 
+                  type="text" 
+                  value={newDestination}
+                  onChange={(e) => setNewDestination(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#e60026]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Ticket Price (₹)</label>
+                <input 
+                  type="number" 
+                  value={newPrice}
+                  onChange={(e) => setNewPrice(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#e60026]"
+                />
+              </div>
+
+              <div className="pt-2 flex gap-2">
+                <button 
+                  type="button" 
+                  onClick={() => setShowBookingModal(false)}
+                  className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="flex-1 py-2.5 rounded-xl bg-[#e60026] text-white font-bold hover:bg-red-700 shadow-sm"
+                >
+                  Pay & Issue Ticket
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   );

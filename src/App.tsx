@@ -42,6 +42,7 @@ import HelpSupport from './components/HelpSupport';
 import WalletTab from './components/WalletTab';
 import QrScannerOverlay from './components/QrScannerOverlay';
 import SplashScreen from './components/SplashScreen';
+import HomePage from './components/HomePage';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState<boolean>(true);
@@ -533,145 +534,36 @@ export default function App() {
 
                   {/* MAIN SCROLL ZONE (TOUCH OPTIMIZED CONTAINER) */}
                   <div 
-                    className={`flex-grow overflow-y-auto no-scrollbar p-5 flex flex-col justify-start transition-colors duration-200 ${
+                    className={`flex-grow overflow-hidden flex flex-col justify-start transition-colors duration-200 ${
                       activeTab === 'passes' ? 'bg-slate-950 text-white' : 'bg-[#f8f9fa] text-slate-800'
                     }`} 
                     id="active-screen-scroll-container"
                   >
                     
-                    {/* 1. HOME SCREEN TAB */}
+                    {/* 1. HOME SCREEN TAB (Exact match of Image 1) */}
                     {activeTab === 'home' && (
                       <motion.div 
-                        initial={{ opacity: 0, x: -15 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="space-y-5"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="absolute inset-0 pt-7 pb-16 flex flex-col"
                       >
-                        {/* Welcome Header */}
-                        <div className="flex justify-between items-center shrink-0">
-                          <div>
-                            <span className="text-[10px] text-red-500 font-extrabold uppercase tracking-wider font-sans">Chennai Metro Transit</span>
-                            <h2 className="text-xl font-display font-black text-slate-950 mt-0.5">Vanakkom, {user.name.split(' ')[0]}!</h2>
-                          </div>
-                          <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-xs">
-                            <Sparkles className="w-4 h-4 text-red-500" />
-                          </div>
-                        </div>
-
-                        {/* Active Pass overview widget */}
-                        <div 
-                          onClick={() => setActiveTab('passes')}
-                          className="bg-white border border-slate-100 shadow-sm p-4 rounded-3xl hover:border-slate-200 cursor-pointer transition-all space-y-3 active:scale-[0.99]"
-                        >
-                          <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-mono text-slate-500 font-bold uppercase">Active Bus Pass</span>
-                            <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase">Activated</span>
-                          </div>
-                          
-                          <div className="flex justify-between items-end">
-                            <div>
-                              <p className="text-lg font-mono font-bold text-slate-900">{pass.passNo}</p>
-                              <p className="text-xs text-slate-500 mt-1">Expiring: {pass.validTo}</p>
-                            </div>
-                            <span className="text-xl font-extrabold text-[#ff0055]">₹{pass.amount}</span>
-                          </div>
-                        </div>
-
-                        {/* Chennai Route Planner Widget */}
-                        <div className="bg-white border border-slate-100 shadow-sm p-4 rounded-3xl space-y-4">
-                          <div className="flex items-center gap-1.5">
-                            <MapPin className="w-4 h-4 text-red-500" />
-                            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">MTC Route Planner</h3>
-                          </div>
-
-                          <form onSubmit={handleRouteSearch} className="space-y-3.5">
-                            <div className="space-y-2.5">
-                              <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">FROM</span>
-                                <select 
-                                  value={plannerSource} 
-                                  onChange={(e) => setPlannerSource(e.target.value)}
-                                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-14 pr-3 text-xs text-slate-800 focus:outline-none focus:border-red-500"
-                                >
-                                  <option value="Broadway">Broadway</option>
-                                  <option value="Chennai Central">Chennai Central</option>
-                                  <option value="Guindy">Guindy</option>
-                                  <option value="Adyar">Adyar</option>
-                                  <option value="Tambaram">Tambaram</option>
-                                  <option value="CMBT">CMBT</option>
-                                </select>
-                              </div>
-
-                              <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">TO</span>
-                                <select 
-                                  value={plannerDest} 
-                                  onChange={(e) => setPlannerDest(e.target.value)}
-                                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-14 pr-3 text-xs text-slate-800 focus:outline-none focus:border-red-500"
-                                >
-                                  <option value="Broadway">Broadway</option>
-                                  <option value="Chennai Central">Chennai Central</option>
-                                  <option value="Guindy">Guindy</option>
-                                  <option value="Adyar">Adyar</option>
-                                  <option value="Tambaram">Tambaram</option>
-                                  <option value="CMBT">CMBT</option>
-                                </select>
-                              </div>
-                            </div>
-
-                            <button 
-                              type="submit"
-                              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#ff0a24] to-[#db0060] text-white font-black text-xs hover:opacity-90 transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-98"
-                            >
-                              Find Transit Route
-                            </button>
-                          </form>
-
-                          {plannerResult && (
-                            <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs mt-3 animate-[fadeIn_0.2s_ease]">
-                              {plannerResult.error ? (
-                                <div className="flex gap-2 text-rose-600 font-bold">
-                                  <AlertCircle className="w-4 h-4 shrink-0" />
-                                  <p className="leading-relaxed">{plannerResult.error}</p>
-                                </div>
-                              ) : (
-                                <div className="space-y-2.5">
-                                  <div className="flex justify-between items-center">
-                                    <span className="font-mono font-bold px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-800" style={{ borderLeft: `3px solid ${plannerResult.color}` }}>
-                                      MTC {plannerResult.routeNo}
-                                    </span>
-                                    <span className="text-[#ff0055] font-black text-sm">₹{plannerResult.fare}</span>
-                                  </div>
-                                  <p className="text-slate-500 text-[11px] leading-tight font-medium">
-                                    Runs {plannerResult.source} ➔ {plannerResult.destination} with {plannerResult.stopsCount} intermediate segments. {plannerResult.activeBuses} active buses currently monitored on live GPS grid.
-                                  </p>
-                                  <button 
-                                    onClick={() => setActiveTab('live')}
-                                    className="text-[10px] font-extrabold text-red-500 hover:underline flex items-center gap-1"
-                                  >
-                                    View Live Map Location <ArrowRight className="w-3 h-3" />
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* MTC Transit Board Advisory News */}
-                        <div className="bg-amber-50 border border-amber-200 p-4 rounded-3xl space-y-2 text-xs">
-                          <span className="text-[10px] text-amber-800 font-black uppercase tracking-wider">Advisory Notice</span>
-                          <p className="text-slate-700 leading-relaxed font-sans text-[11px] font-medium">
-                            Festive special buses scheduled to run towards Adyar and Tambaram on weekends. Fares remain subsidized. Please verify identity documents prior to ticket inspections.
-                          </p>
-                        </div>
+                        <HomePage 
+                          onSelectCategory={(cat) => {
+                            if (cat === 'Bus') setActiveTab('passes');
+                            else setActiveTab('ticket');
+                          }}
+                          onOpenQrScanner={() => setShowScanner(true)}
+                          onNavigateToTab={(tab) => setActiveTab(tab)}
+                        />
                       </motion.div>
                     )}
 
-                    {/* 2. PASSES SCREEN TAB (Pixel perfect match with screenshot!) */}
+                    {/* 2. PASSES SCREEN TAB */}
                     {activeTab === 'passes' && (
                       <motion.div 
                         initial={{ opacity: 0, scale: 0.98 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="flex flex-col h-full"
+                        className="flex flex-col h-full p-5 overflow-y-auto no-scrollbar"
                       >
                         {/* UPPER CONTROL HEADER */}
                         <div className="flex items-center justify-between pb-4 shrink-0" id="mtc-passes-header">
@@ -733,7 +625,7 @@ export default function App() {
                       </motion.div>
                     )}
 
-                    {/* 4. TICKET DISPENSER SCREEN TAB */}
+                    {/* 4. TICKET SCREEN TAB (Exact match of Image 2 - Past Tickets) */}
                     {activeTab === 'ticket' && (
                       <motion.div 
                         initial={{ opacity: 0, y: 15 }}
@@ -744,7 +636,7 @@ export default function App() {
                       </motion.div>
                     )}
 
-                    {/* 5. USER PROFILE SCREEN TAB */}
+                    {/* 5. USER PROFILE SCREEN TAB (Exact match of Image 3) */}
                     {activeTab === 'profile' && (
                       <motion.div 
                         initial={{ opacity: 0, x: 15 }}
@@ -757,6 +649,7 @@ export default function App() {
                           pass={pass}
                           onPassUpdate={setPass}
                           onLogout={handleLogout} 
+                          onBack={() => setActiveTab('home')}
                         />
                       </motion.div>
                     )}
@@ -789,34 +682,38 @@ export default function App() {
                     )}
                   </div>
 
-                  {/* PERSISTENT STICKY BOTTOM UTILITY NAVIGATION BAR */}
+                  {/* PERSISTENT STICKY BOTTOM UTILITY NAVIGATION BAR (Exact match of attached screenshots) */}
                   <div 
-                    className="absolute bottom-0 inset-x-0 h-16 bg-[#0a0a0a] border-t border-neutral-900 flex justify-around items-center z-40 select-none"
+                    className="absolute bottom-0 inset-x-0 h-16 bg-white border-t border-slate-200/90 flex justify-around items-center z-40 select-none shadow-[0_-4px_20px_rgba(0,0,0,0.03)]"
                     id="sticky-bottom-nav"
                   >
                     {/* 1. Home button */}
                     <button 
                       onClick={() => setActiveTab('home')}
-                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
-                        activeTab === 'home' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all cursor-pointer ${
+                        activeTab === 'home' ? 'text-[#ff3b30] font-black' : 'text-slate-500 hover:text-slate-800'
                       }`}
                     >
-                      <Home className="w-5 h-5 stroke-[2]" />
-                      <span className="text-[9px] font-sans font-semibold mt-0.5">Home</span>
+                      <Home className="w-5 h-5 stroke-[2.2]" />
+                      <span className="text-[10px] font-sans font-bold mt-0.5">Home</span>
                     </button>
 
                     {/* 2. Passes button with numeric notification badge */}
                     <button 
                       onClick={() => setActiveTab('passes')}
-                      className={`relative flex flex-col items-center justify-center w-12 h-12 transition-all ${
-                        activeTab === 'passes' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                      className={`relative flex flex-col items-center justify-center w-12 h-12 transition-all cursor-pointer ${
+                        activeTab === 'passes' ? 'text-[#ff3b30] font-black' : 'text-slate-500 hover:text-slate-800'
                       }`}
                     >
-                      <CreditCard className="w-5 h-5 stroke-[2]" />
-                      <span className="text-[9px] font-sans font-semibold mt-0.5">Passes</span>
+                      {/* Arc Pass Icon SVG matching screenshot */}
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-current stroke-[2.2]">
+                        <path d="M 3 10 C 3 6 6 4 12 4 C 18 4 21 6 21 10 L 21 18 C 21 19 20 20 19 20 L 5 20 C 4 20 3 19 3 18 Z" />
+                        <line x1="8" y1="9" x2="16" y2="9" />
+                      </svg>
+                      <span className="text-[10px] font-sans font-bold mt-0.5">Passes</span>
                       
-                      {/* Red alert bubble numeric "1" matching screenshot exactly! */}
-                      <div className="absolute top-0.5 right-1.5 bg-[#df3d3d] text-white font-sans text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-black shadow">
+                      {/* Red alert bubble numeric "1" */}
+                      <div className="absolute top-0.5 right-1.5 bg-[#df3d3d] text-white font-sans text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center shadow">
                         1
                       </div>
                     </button>
@@ -824,46 +721,54 @@ export default function App() {
                     {/* 3. Live tracking button */}
                     <button 
                       onClick={() => setActiveTab('live')}
-                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
-                        activeTab === 'live' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all cursor-pointer ${
+                        activeTab === 'live' ? 'text-[#ff3b30] font-black' : 'text-slate-500 hover:text-slate-800'
                       }`}
                     >
-                      <Radio className="w-5 h-5 stroke-[2]" />
-                      <span className="text-[9px] font-sans font-semibold mt-0.5">Live</span>
+                      {/* Circle target live icon */}
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-current stroke-[2.2]">
+                        <circle cx="12" cy="12" r="8" />
+                        <circle cx="12" cy="12" r="3" fill="currentColor" />
+                      </svg>
+                      <span className="text-[10px] font-sans font-bold mt-0.5">Live</span>
                     </button>
 
                     {/* 4. Ticket dispenser button */}
                     <button 
                       onClick={() => setActiveTab('ticket')}
-                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
-                        activeTab === 'ticket' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all cursor-pointer ${
+                        activeTab === 'ticket' ? 'text-[#ff3b30] font-black' : 'text-slate-500 hover:text-slate-800'
                       }`}
                     >
-                      <Ticket className="w-5 h-5 stroke-[2]" />
-                      <span className="text-[9px] font-sans font-semibold mt-0.5">Ticket</span>
+                      {/* Ticket Notch Icon matching screenshot */}
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-current stroke-[2.2]">
+                        <path d="M 4 6 L 20 6 L 20 10 C 18.5 10 18.5 14 20 14 L 20 18 L 4 18 L 4 14 C 5.5 14 5.5 10 4 10 Z" />
+                        <line x1="9" y1="12" x2="15" y2="12" strokeDasharray="1.5 1.5" />
+                      </svg>
+                      <span className="text-[10px] font-sans font-bold mt-0.5">Ticket</span>
                     </button>
 
-                    {/* 5. Wallet button */}
-                    <button 
-                      onClick={() => setActiveTab('wallet')}
-                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
-                        activeTab === 'wallet' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
-                      }`}
-                    >
-                      <Wallet className="w-5 h-5 stroke-[2]" />
-                      <span className="text-[9px] font-sans font-semibold mt-0.5">Wallet</span>
-                    </button>
-
-                    {/* 6. Profile setup button */}
+                    {/* 5. Profile setup button */}
                     <button 
                       onClick={() => setActiveTab('profile')}
-                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
-                        activeTab === 'profile' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all cursor-pointer ${
+                        activeTab === 'profile' ? 'text-[#ff3b30] font-black' : 'text-slate-500 hover:text-slate-800'
                       }`}
                     >
-                      <User className="w-5 h-5 stroke-[2]" />
-                      <span className="text-[9px] font-sans font-semibold mt-0.5">Profile</span>
+                      <User className="w-5 h-5 stroke-[2.2]" />
+                      <span className="text-[10px] font-sans font-bold mt-0.5">Profile</span>
                     </button>
+
+                    {/* FLOATING BLUE "BUS QR" BUTTON (Appears when on Home tab or overlay) */}
+                    {activeTab === 'home' && (
+                      <button 
+                        onClick={() => setShowScanner(true)}
+                        className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#0066ff] hover:bg-blue-600 text-white rounded-2xl px-4 py-2.5 shadow-lg flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-all cursor-pointer border-2 border-white"
+                      >
+                        <QrCode className="w-5 h-5 text-white stroke-[2.5]" />
+                        <span className="text-[9px] font-black tracking-wider uppercase">BUS QR</span>
+                      </button>
+                    )}
                   </div>
 
                   {/* OVERLAYS & DRAWER COMPONENTS */}
