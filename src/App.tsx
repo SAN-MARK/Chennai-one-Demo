@@ -42,6 +42,7 @@ import ProfileTab from './components/ProfileTab';
 import HistoryLogs from './components/HistoryLogs';
 import HelpSupport from './components/HelpSupport';
 import WalletTab from './components/WalletTab';
+import QrScannerOverlay from './components/QrScannerOverlay';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
@@ -424,6 +425,19 @@ export default function App() {
                         {/* Title text */}
                         <h1 className="text-4xl font-sans font-black tracking-tight text-slate-900 leading-none">chennai</h1>
                         <h1 className="text-4xl font-sans font-black tracking-tight text-slate-900 leading-none mt-1">one</h1>
+
+                        {/* Quick Pass Access button */}
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsLoggedIn(true);
+                            setActiveTab('passes');
+                          }}
+                          className="mt-6 bg-slate-900 hover:bg-black text-amber-400 font-bold text-xs py-3 px-6 rounded-full shadow-lg flex items-center gap-2 border border-slate-800 active:scale-95 transition-all cursor-pointer"
+                        >
+                          <CreditCard className="w-4 h-4 text-amber-400" />
+                          <span>View Active MTC Pass</span>
+                        </button>
                       </div>
 
                       {/* Footer branding */}
@@ -784,6 +798,13 @@ export default function App() {
                         <div className="flex items-center justify-between pb-4 shrink-0" id="mtc-passes-header">
                           <h1 className="text-2xl font-display font-black text-white" id="passes-screen-title">Passes</h1>
                           <div className="flex gap-2">
+                            {/* Scan QR Button */}
+                            <button 
+                              onClick={() => setShowScanner(true)}
+                              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#e6005c] hover:bg-[#c4004e] active:scale-95 transition-all text-xs font-bold rounded-full text-white shadow-md cursor-pointer"
+                            >
+                              <QrCode className="w-3.5 h-3.5" /> Scan QR
+                            </button>
                             {/* Help Button */}
                             <button 
                               onClick={() => setShowHelp(true)}
@@ -890,6 +911,17 @@ export default function App() {
 
                   {/* PERSISTENT STICKY BOTTOM UTILITY NAVIGATION BAR (Matching Screenshots 5, 6, 7) */}
                   <div className="relative border-t border-slate-200 bg-white z-40 select-none">
+                    {/* Floating Center "BUS QR" Action Button */}
+                    <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-50">
+                      <button 
+                        onClick={() => setShowScanner(true)}
+                        className="bg-[#111827] text-white px-4 py-2 rounded-full shadow-xl flex items-center gap-2 border-2 border-white cursor-pointer hover:scale-105 active:scale-95 transition-transform"
+                      >
+                        <QrCode className="w-4 h-4 text-amber-400 animate-pulse" />
+                        <span className="text-xs font-black tracking-wide uppercase">BUS QR</span>
+                      </button>
+                    </div>
+
                     <div className="h-16 flex justify-around items-center px-2" id="sticky-bottom-nav">
                       {/* 1. Home button */}
                       <button 
@@ -999,6 +1031,13 @@ export default function App() {
                         <HelpSupport onClose={() => setShowHelp(false)} />
                       </motion.div>
                     )}
+
+                    {/* 4. Camera & Simulated QR Code Scanner Overlay */}
+                    <QrScannerOverlay 
+                      isOpen={showScanner} 
+                      onClose={() => setShowScanner(false)} 
+                      pass={pass} 
+                    />
 
                     {/* 4. Renew Pass Dialogue Box Modal */}
                     {showRenewDialog && (
