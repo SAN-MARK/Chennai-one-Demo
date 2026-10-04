@@ -28,9 +28,7 @@ import {
   Calendar,
   Camera,
   Upload,
-  Wallet,
-  Search,
-  Train
+  Wallet
 } from 'lucide-react';
 import { MtcPass, UserProfile, TabType, IdType, WalletTransaction } from './types';
 import { INITIAL_USER, INITIAL_PASS, CHENNAI_ROUTES } from './data';
@@ -49,15 +47,10 @@ export default function App() {
     return localStorage.getItem('findback_logged_in') === 'true';
   });
 
-  const [loginStep, setLoginStep] = useState<'splash' | 'mobile' | 'otp'>('splash');
-  const [mobileInput, setMobileInput] = useState('9042999788');
-  const [otpDigits, setOtpDigits] = useState(['9', '0', '4', '2']);
-  const [locationGranted, setLocationGranted] = useState(false);
-
-  const [loginName, setLoginName] = useState('SANJEEV');
-  const [loginMobile, setLoginMobile] = useState('9042999788');
-  const [loginAadhaar, setLoginAadhaar] = useState('1234-5678-9012');
-  const [loginEmail, setLoginEmail] = useState('iamheresanjeev@gmail.com');
+  const [loginName, setLoginName] = useState('');
+  const [loginMobile, setLoginMobile] = useState('');
+  const [loginAadhaar, setLoginAadhaar] = useState('');
+  const [loginEmail, setLoginEmail] = useState('');
 
   const [user, setUser] = useState<UserProfile>(() => {
     const saved = localStorage.getItem('findback_user');
@@ -396,234 +389,95 @@ export default function App() {
             <div className="flex-grow flex flex-col pt-7 pb-16 relative overflow-hidden" id="simulated-touch-screen">
               
               {!isLoggedIn ? (
-                /* CHENNAI ONE AUTHENTICATION FLOW (Matching Screenshots 1, 2, 3) */
-                <div className="flex-grow flex flex-col bg-white text-slate-900 relative overflow-y-auto no-scrollbar select-none" id="mtc-auth-flow">
-                  
-                  {/* SCREEN 1: SPLASH SCREEN */}
-                  {loginStep === 'splash' && (
-                    <motion.div 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      onClick={() => setLoginStep('mobile')}
-                      className="flex-grow flex flex-col items-center justify-between p-6 cursor-pointer text-center"
+                /* BEAUTIFUL CHENNAI ONE RED & WHITE LOGIN SCREEN */
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex-grow flex flex-col p-6 overflow-y-auto no-scrollbar bg-gradient-to-b from-[#ff0a24] via-[#ff0055] to-[#db0060] justify-center relative select-none"
+                  id="mtc-login-screen"
+                >
+                  {/* Visual logo and title matching the attached image exactly */}
+                  <div className="text-center mb-8 shrink-0 mt-4">
+                    <div className="flex justify-center mb-4">
+                      <svg viewBox="0 0 100 100" className="w-24 h-24 text-white fill-none stroke-current animate-[pulse_3s_infinite]">
+                        {/* Open circle contour with gap at bottom-right */}
+                        <path d="M 50 15 A 35 35 0 1 0 71 71" strokeWidth="10" strokeLinecap="round" />
+                        {/* Number 1 inside */}
+                        <path d="M 51 35 L 51 72 M 41 45 L 51 35" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    <h1 className="text-4xl font-sans font-black tracking-tighter text-white uppercase leading-none">chennai</h1>
+                    <h1 className="text-4xl font-sans font-black tracking-tighter text-white uppercase leading-none mt-1">one</h1>
+                    <p className="text-[10px] text-red-100 font-bold tracking-wider mt-3.5 opacity-90 uppercase font-mono">
+                      Chennai Metro Transit Pass Portal
+                    </p>
+                  </div>
+
+                  {/* Form */}
+                  <form onSubmit={handleLoginSubmit} className="space-y-5 font-sans text-xs">
+                    {/* Name input */}
+                    <div className="flex flex-col">
+                      <label className="block text-[11px] uppercase font-bold text-white tracking-wider mb-1.5">Full Name</label>
+                      <input 
+                        type="text" 
+                        required
+                        value={loginName}
+                        onChange={(e) => setLoginName(e.target.value)}
+                        placeholder="e.g. Sanjeev M"
+                        className="w-full bg-white border border-slate-200 rounded-xl py-3 px-4 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-sans shadow-sm transition-all"
+                      />
+                    </div>
+
+                    {/* Mobile Input */}
+                    <div className="flex flex-col">
+                      <label className="block text-[11px] uppercase font-bold text-white tracking-wider mb-1.5">Mobile Number</label>
+                      <input 
+                        type="tel" 
+                        required
+                        value={loginMobile}
+                        onChange={(e) => setLoginMobile(e.target.value)}
+                        placeholder="e.g. +91 98401 23456"
+                        className="w-full bg-white border border-slate-200 rounded-xl py-3 px-4 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-mono shadow-sm transition-all"
+                      />
+                    </div>
+
+                    {/* Aadhaar Input */}
+                    <div className="flex flex-col">
+                      <label className="block text-[11px] uppercase font-bold text-white tracking-wider mb-1.5">Aadhaar Number</label>
+                      <input 
+                        type="text" 
+                        required
+                        value={loginAadhaar}
+                        onChange={handleAadhaarChange}
+                        placeholder="e.g. 1234-5678-9012"
+                        className="w-full bg-white border border-slate-200 rounded-xl py-3 px-4 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-mono shadow-sm transition-all"
+                      />
+                    </div>
+
+                    {/* Email Input (Replaced Password section as requested) */}
+                    <div className="flex flex-col">
+                      <label className="block text-[11px] uppercase font-bold text-white tracking-wider mb-1.5 flex items-center gap-1">
+                        <Mail className="w-3 h-3" /> Email Address
+                      </label>
+                      <input 
+                        type="email" 
+                        required
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                        placeholder="e.g. sanjeev@chennai.gov.in"
+                        className="w-full bg-white border border-slate-200 rounded-xl py-3 px-4 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 font-medium font-mono shadow-sm transition-all"
+                      />
+                    </div>
+
+                    {/* Submit Button */}
+                    <button 
+                      type="submit"
+                      className="w-full mt-6 py-3.5 rounded-xl bg-white text-[#ff0055] font-black text-sm hover:bg-slate-50 transition-all flex items-center justify-center gap-1.5 shadow-lg active:scale-95 cursor-pointer uppercase tracking-wider"
                     >
-                      <div className="my-auto flex flex-col items-center justify-center">
-                        {/* Large rounded logo icon with vibrant gradient */}
-                        <div 
-                          className="w-36 h-36 rounded-[36px] flex items-center justify-center shadow-xl mb-6 relative overflow-hidden"
-                          style={{
-                            background: 'linear-gradient(135deg, #e6005c 0%, #ff1a1a 50%, #ff7f00 100%)'
-                          }}
-                        >
-                          {/* Inner white gap ring and number 1 */}
-                          <svg viewBox="0 0 100 100" className="w-28 h-28 text-white fill-none stroke-current">
-                            <path d="M 50 15 A 35 35 0 1 0 71 71" strokeWidth="11" strokeLinecap="round" />
-                            <path d="M 51 35 L 51 72 M 41 45 L 51 35" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </div>
-
-                        {/* Title text */}
-                        <h1 className="text-4xl font-sans font-black tracking-tight text-slate-900 leading-none">chennai</h1>
-                        <h1 className="text-4xl font-sans font-black tracking-tight text-slate-900 leading-none mt-1">one</h1>
-
-                        {/* Quick Pass Access button */}
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsLoggedIn(true);
-                            setActiveTab('passes');
-                          }}
-                          className="mt-6 bg-slate-900 hover:bg-black text-amber-400 font-bold text-xs py-3 px-6 rounded-full shadow-lg flex items-center gap-2 border border-slate-800 active:scale-95 transition-all cursor-pointer"
-                        >
-                          <CreditCard className="w-4 h-4 text-amber-400" />
-                          <span>View Active MTC Pass</span>
-                        </button>
-                      </div>
-
-                      {/* Footer branding */}
-                      <div className="w-full space-y-4 pb-4 shrink-0">
-                        <div className="space-y-1">
-                          <span className="text-xs font-bold text-slate-400 block">Powered by</span>
-                          <div className="flex items-center justify-center gap-1">
-                            <span className="text-[10px] font-extrabold text-slate-600 max-w-[200px] leading-tight">
-                              Chennai Unified Metropolitan Transport Authority(CUMTA)
-                            </span>
-                          </div>
-                          {/* Geometric CUMTA graphic */}
-                          <div className="flex justify-center my-1">
-                            <span className="font-mono font-black text-blue-600 text-lg tracking-widest border-b-2 border-blue-500 pb-0.5">CUMTA</span>
-                          </div>
-                        </div>
-
-                        {/* Bottom Row of Govt / Transit Crests */}
-                        <div className="flex items-center justify-center gap-4 opacity-75 pt-2">
-                          <div className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-[8px] font-bold text-slate-600">TN</div>
-                          <div className="w-7 h-7 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-[8px] font-black text-blue-800">MTC</div>
-                          <div className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-[8px] font-bold text-slate-600">CMRL</div>
-                          <div className="w-7 h-7 rounded-full bg-purple-50 border border-purple-200 flex items-center justify-center text-[8px] font-black text-purple-900">IR</div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* SCREEN 2: LOGIN STEP 1/3 (MOBILE NUMBER ENTRY - Screenshot 2) */}
-                  {loginStep === 'mobile' && (
-                    <motion.div 
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="flex-grow flex flex-col p-5 justify-between"
-                    >
-                      <div>
-                        {/* Header bar */}
-                        <div className="flex items-center justify-between pt-2 pb-4">
-                          <button 
-                            onClick={() => setLoginStep('splash')}
-                            className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 hover:bg-slate-200"
-                          >
-                            <ArrowRight className="w-5 h-5 rotate-180" />
-                          </button>
-                          <div className="flex items-center gap-2">
-                            <div className="w-20 h-1 bg-slate-200 rounded-full overflow-hidden">
-                              <div className="w-1/3 h-full bg-slate-900" />
-                            </div>
-                            <span className="text-xs font-mono font-bold text-slate-400">1/3</span>
-                          </div>
-                        </div>
-
-                        {/* Heading */}
-                        <h2 className="text-2xl font-sans font-black text-slate-900 tracking-tight mt-2 mb-6">
-                          Let's get you trip-ready!
-                        </h2>
-
-                        {/* Card box */}
-                        <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-xs space-y-3">
-                          <label className="block text-xs font-bold text-slate-700">
-                            Enter your Mobile Number
-                          </label>
-                          <div className="flex gap-2">
-                            <div className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-xs font-extrabold text-slate-800 flex items-center gap-1 shrink-0">
-                              <span>🇮🇳</span>
-                              <span>+91</span>
-                            </div>
-                            <input 
-                              type="tel"
-                              maxLength={10}
-                              value={mobileInput}
-                              onChange={(e) => setMobileInput(e.target.value.replace(/\D/g, ''))}
-                              placeholder="10-digit mobile number"
-                              className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-300 font-mono font-bold focus:outline-none focus:border-red-500"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Bottom Footer */}
-                      <div className="space-y-4 pt-4">
-                        <div className="text-center space-y-1">
-                          <p className="text-[11px] text-slate-500 font-medium">
-                            By clicking Continue, you agree to our <button onClick={() => alert("Terms & Conditions applied.")} className="font-bold underline text-slate-800">T&Cs</button>
-                          </p>
-                          <div className="text-xs font-bold text-slate-500 flex items-center justify-center gap-1 cursor-pointer">
-                            <span>Language: English</span>
-                            <span>⌄</span>
-                          </div>
-                        </div>
-
-                        <button 
-                          onClick={() => {
-                            if (mobileInput.length === 10) setLoginStep('otp');
-                            else alert("Please enter a valid 10-digit mobile number.");
-                          }}
-                          className={`w-full py-4 rounded-2xl font-black text-sm transition-all cursor-pointer shadow-sm ${
-                            mobileInput.length === 10 
-                              ? 'bg-[#ff0055] text-white hover:bg-[#db0048]' 
-                              : 'bg-slate-200 text-slate-400'
-                          }`}
-                        >
-                          Continue
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* SCREEN 3: LOGIN STEP 2/3 (OTP ENTRY - Screenshot 3) */}
-                  {loginStep === 'otp' && (
-                    <motion.div 
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="flex-grow flex flex-col p-5 justify-between"
-                    >
-                      <div>
-                        {/* Header bar */}
-                        <div className="flex items-center justify-between pt-2 pb-4">
-                          <button 
-                            onClick={() => setLoginStep('mobile')}
-                            className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 hover:bg-slate-200"
-                          >
-                            <ArrowRight className="w-5 h-5 rotate-180" />
-                          </button>
-                          <div className="flex items-center gap-2">
-                            <div className="w-20 h-1 bg-slate-200 rounded-full overflow-hidden">
-                              <div className="w-2/3 h-full bg-slate-900" />
-                            </div>
-                            <span className="text-xs font-mono font-bold text-slate-400">2/3</span>
-                          </div>
-                        </div>
-
-                        {/* Heading */}
-                        <h2 className="text-2xl font-sans font-black text-slate-900 tracking-tight mt-2 mb-6">
-                          Let's get you trip-ready!
-                        </h2>
-
-                        {/* Card box */}
-                        <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-xs space-y-4">
-                          <p className="text-xs font-bold text-slate-700">
-                            OTP sent to +91 {mobileInput}
-                          </p>
-
-                          {/* 4 OTP Digit boxes */}
-                          <div className="grid grid-cols-4 gap-3 py-1">
-                            {otpDigits.map((digit, idx) => (
-                              <input 
-                                key={idx}
-                                type="text"
-                                maxLength={1}
-                                value={digit}
-                                onChange={(e) => {
-                                  const newDigits = [...otpDigits];
-                                  newDigits[idx] = e.target.value;
-                                  setOtpDigits(newDigits);
-                                }}
-                                className="w-full h-12 rounded-2xl border-2 border-slate-200 text-center font-mono font-black text-lg text-slate-900 focus:border-red-500 focus:outline-none"
-                              />
-                            ))}
-                          </div>
-
-                          <button onClick={() => alert("OTP Resent successfully!")} className="text-xs font-bold text-slate-400 hover:text-slate-600 block">
-                            Resend OTP(2)
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Bottom Footer Button */}
-                      <div className="pt-4">
-                        <button 
-                          onClick={() => {
-                            setUser(prev => ({ ...prev, name: 'SANJEEV', phone: `+91 ${mobileInput}`, email: 'iamheresanjeev@gmail.com' }));
-                            setPass(prev => ({ ...prev, name: 'SANJEEV' }));
-                            setIsLoggedIn(true);
-                            localStorage.setItem('findback_logged_in', 'true');
-                            setActiveTab('home');
-                          }}
-                          className="w-full py-4 rounded-2xl bg-[#ff0055] hover:bg-[#db0048] text-white font-black text-sm transition-all cursor-pointer shadow-md"
-                        >
-                          Continue
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-
-                </div>
+                      Authenticate & Access Pass
+                    </button>
+                  </form>
+                </motion.div>
               ) : (
                 <>
                   {/* Dynamic Notification Banner for Renewal Confirmations */}
@@ -649,140 +503,137 @@ export default function App() {
                     )}
                   </AnimatePresence>
 
-                  {/* LOCATION PERMISSION DIALOG / SHEET (Screenshot 4) */}
-                  {!locationGranted && activeTab === 'home' && (
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-xs z-50 flex flex-col justify-end">
-                      <motion.div 
-                        initial={{ y: 100 }}
-                        animate={{ y: 0 }}
-                        className="bg-white rounded-t-[36px] p-6 text-slate-900 space-y-4 shadow-2xl"
-                      >
-                        <div className="w-12 h-1 bg-slate-200 rounded-full mx-auto" />
-                        <h2 className="text-xl font-sans font-black tracking-tight leading-tight text-slate-900">
-                          Hey SANJEEV,<br />Welcome to Chennai One!
-                        </h2>
-                        <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                          To start booking rides, please allow us to find you by providing location access.
-                        </p>
-                        <button 
-                          onClick={() => setLocationGranted(true)}
-                          className="w-full py-4 bg-[#ff3b30] hover:bg-[#e03126] text-white font-black text-sm rounded-2xl flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all"
-                        >
-                          <MapPin className="w-4 h-4" /> Grant Location Access
-                        </button>
-                      </motion.div>
-                    </div>
-                  )}
-
                   {/* MAIN SCROLL ZONE (TOUCH OPTIMIZED CONTAINER) */}
                   <div 
-                    className={`flex-grow overflow-y-auto no-scrollbar p-0 flex flex-col justify-start transition-colors duration-200 ${
-                      activeTab === 'passes' ? 'bg-slate-950 text-white p-5' : 'bg-[#f8f9fa] text-slate-800'
+                    className={`flex-grow overflow-y-auto no-scrollbar p-5 flex flex-col justify-start transition-colors duration-200 ${
+                      activeTab === 'passes' ? 'bg-slate-950 text-white' : 'bg-[#f8f9fa] text-slate-800'
                     }`} 
                     id="active-screen-scroll-container"
                   >
                     
-                    {/* 1. HOME SCREEN TAB (Matching Screenshot 5) */}
+                    {/* 1. HOME SCREEN TAB */}
                     {activeTab === 'home' && (
                       <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="flex flex-col min-h-full pb-20"
+                        initial={{ opacity: 0, x: -15 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="space-y-5"
                       >
-                        {/* Map View Frame */}
-                        <div className="relative w-full h-[220px] bg-slate-100 shrink-0 overflow-hidden border-b border-slate-200">
-                          <LiveMap />
-                          
-                          {/* Center Bus Toggle Switch Pill */}
-                          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 bg-slate-900/90 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-2 border border-slate-800">
-                            <Bus className="w-4 h-4 text-emerald-400" />
-                            <div className="w-7 h-4 bg-slate-700 rounded-full p-0.5 flex items-center">
-                              <div className="w-3 h-3 rounded-full bg-white translate-x-3" />
-                            </div>
+                        {/* Welcome Header */}
+                        <div className="flex justify-between items-center shrink-0">
+                          <div>
+                            <span className="text-[10px] text-red-500 font-extrabold uppercase tracking-wider font-sans">Chennai Metro Transit</span>
+                            <h2 className="text-xl font-display font-black text-slate-950 mt-0.5">Vanakkom, {user.name.split(' ')[0]}!</h2>
                           </div>
-
-                          {/* Location Target button */}
-                          <div className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-white text-slate-800 shadow-md flex items-center justify-center border border-slate-200">
-                            <MapPin className="w-4 h-4" />
+                          <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-xs">
+                            <Sparkles className="w-4 h-4 text-red-500" />
                           </div>
                         </div>
 
-                        {/* White Bottom Sheet Content Area */}
-                        <div className="p-4 space-y-4 -mt-4 bg-white rounded-t-[28px] relative z-20 shadow-lg flex-grow">
+                        {/* Active Pass overview widget */}
+                        <div 
+                          onClick={() => setActiveTab('passes')}
+                          className="bg-white border border-slate-100 shadow-sm p-4 rounded-3xl hover:border-slate-200 cursor-pointer transition-all space-y-3 active:scale-[0.99]"
+                        >
+                          <div className="flex justify-between items-center">
+                            <span className="text-[10px] font-mono text-slate-500 font-bold uppercase">Active Bus Pass</span>
+                            <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase">Activated</span>
+                          </div>
                           
-                          {/* Search Bar with Red-to-Orange Gradient */}
-                          <div 
-                            className="w-full py-3.5 px-4 rounded-2xl text-white shadow-md flex items-center gap-2.5 cursor-pointer"
-                            style={{
-                              background: 'linear-gradient(90deg, #e6005c 0%, #ff1a1a 50%, #ff7f00 100%)'
-                            }}
-                            onClick={() => setActiveTab('ticket')}
-                          >
-                            <Search className="w-4 h-4 text-white" />
-                            <span className="text-xs font-black tracking-wide">Where are you going?</span>
+                          <div className="flex justify-between items-end">
+                            <div>
+                              <p className="text-lg font-mono font-bold text-slate-900">{pass.passNo}</p>
+                              <p className="text-xs text-slate-500 mt-1">Expiring: {pass.validTo}</p>
+                            </div>
+                            <span className="text-xl font-extrabold text-[#ff0055]">₹{pass.amount}</span>
+                          </div>
+                        </div>
+
+                        {/* Chennai Route Planner Widget */}
+                        <div className="bg-white border border-slate-100 shadow-sm p-4 rounded-3xl space-y-4">
+                          <div className="flex items-center gap-1.5">
+                            <MapPin className="w-4 h-4 text-red-500" />
+                            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">MTC Route Planner</h3>
                           </div>
 
-                          {/* 4 Category Circles (Bus, Train, Metro, Auto/Cab) */}
-                          <div className="grid grid-cols-4 gap-2 pt-1">
-                            {/* Bus */}
-                            <button onClick={() => setActiveTab('passes')} className="flex flex-col items-center gap-1.5 cursor-pointer">
-                              <div className="w-13 h-13 rounded-full bg-[#fbc02d] text-slate-900 flex items-center justify-center shadow-xs">
-                                <Bus className="w-6 h-6" />
-                              </div>
-                              <span className="text-xs font-bold text-slate-700">Bus</span>
-                            </button>
-
-                            {/* Train */}
-                            <button onClick={() => setActiveTab('ticket')} className="flex flex-col items-center gap-1.5 cursor-pointer">
-                              <div className="w-13 h-13 rounded-full bg-[#81c784] text-slate-900 flex items-center justify-center shadow-xs">
-                                <Train className="w-6 h-6" />
-                              </div>
-                              <span className="text-xs font-bold text-slate-700">Train</span>
-                            </button>
-
-                            {/* Metro */}
-                            <button onClick={() => setActiveTab('ticket')} className="flex flex-col items-center gap-1.5 cursor-pointer">
-                              <div className="w-13 h-13 rounded-full bg-[#64b5f6] text-slate-900 flex items-center justify-center shadow-xs">
-                                <Train className="w-6 h-6" />
-                              </div>
-                              <span className="text-xs font-bold text-slate-700">Metro</span>
-                            </button>
-
-                            {/* Auto/Cab */}
-                            <button onClick={() => alert("Auto/Cab booking coming soon!")} className="flex flex-col items-center gap-1.5 cursor-pointer">
-                              <div className="w-13 h-13 rounded-full bg-[#ce93d8] text-slate-900 flex items-center justify-center shadow-xs">
-                                <Bus className="w-6 h-6" />
-                              </div>
-                              <span className="text-xs font-bold text-slate-700">Auto/Cab</span>
-                            </button>
-                          </div>
-
-                          {/* Promo Banner Card (Screenshot 5 - Purple Card) */}
-                          <div className="bg-[#651fff] rounded-3xl p-5 text-white shadow-md relative overflow-hidden space-y-3">
-                            <div className="flex items-center justify-between">
-                              <div className="flex -space-x-2">
-                                <div className="w-8 h-8 rounded-full bg-amber-200 border-2 border-white flex items-center justify-center text-slate-800 text-xs font-black">🤓</div>
-                                <div className="w-8 h-8 rounded-full bg-pink-300 border-2 border-white flex items-center justify-center text-slate-800 text-xs font-black">👧</div>
+                          <form onSubmit={handleRouteSearch} className="space-y-3.5">
+                            <div className="space-y-2.5">
+                              <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">FROM</span>
+                                <select 
+                                  value={plannerSource} 
+                                  onChange={(e) => setPlannerSource(e.target.value)}
+                                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-14 pr-3 text-xs text-slate-800 focus:outline-none focus:border-red-500"
+                                >
+                                  <option value="Broadway">Broadway</option>
+                                  <option value="Chennai Central">Chennai Central</option>
+                                  <option value="Guindy">Guindy</option>
+                                  <option value="Adyar">Adyar</option>
+                                  <option value="Tambaram">Tambaram</option>
+                                  <option value="CMBT">CMBT</option>
+                                </select>
                               </div>
 
-                              {/* Gold coin icon */}
-                              <div className="w-10 h-10 rounded-full bg-amber-400 border-2 border-amber-200 flex items-center justify-center text-amber-950 font-black text-sm shadow-md">
-                                1
+                              <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">TO</span>
+                                <select 
+                                  value={plannerDest} 
+                                  onChange={(e) => setPlannerDest(e.target.value)}
+                                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-14 pr-3 text-xs text-slate-800 focus:outline-none focus:border-red-500"
+                                >
+                                  <option value="Broadway">Broadway</option>
+                                  <option value="Chennai Central">Chennai Central</option>
+                                  <option value="Guindy">Guindy</option>
+                                  <option value="Adyar">Adyar</option>
+                                  <option value="Tambaram">Tambaram</option>
+                                  <option value="CMBT">CMBT</option>
+                                </select>
                               </div>
                             </div>
 
-                            <h3 className="text-lg font-sans font-black leading-tight max-w-[220px]">
-                              Educate your friends about Chennai One
-                            </h3>
-
                             <button 
-                              onClick={() => alert("Share link copied to clipboard!")}
-                              className="bg-slate-900 hover:bg-black text-white text-xs font-black py-2.5 px-4 rounded-full inline-flex items-center gap-2 shadow-sm transition-all cursor-pointer"
+                              type="submit"
+                              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#ff0a24] to-[#db0060] text-white font-black text-xs hover:opacity-90 transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-98"
                             >
-                              <span>✈ Share App with Friends</span>
+                              Find Transit Route
                             </button>
-                          </div>
+                          </form>
 
+                          {plannerResult && (
+                            <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs mt-3 animate-[fadeIn_0.2s_ease]">
+                              {plannerResult.error ? (
+                                <div className="flex gap-2 text-rose-600 font-bold">
+                                  <AlertCircle className="w-4 h-4 shrink-0" />
+                                  <p className="leading-relaxed">{plannerResult.error}</p>
+                                </div>
+                              ) : (
+                                <div className="space-y-2.5">
+                                  <div className="flex justify-between items-center">
+                                    <span className="font-mono font-bold px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-800" style={{ borderLeft: `3px solid ${plannerResult.color}` }}>
+                                      MTC {plannerResult.routeNo}
+                                    </span>
+                                    <span className="text-[#ff0055] font-black text-sm">₹{plannerResult.fare}</span>
+                                  </div>
+                                  <p className="text-slate-500 text-[11px] leading-tight font-medium">
+                                    Runs {plannerResult.source} ➔ {plannerResult.destination} with {plannerResult.stopsCount} intermediate segments. {plannerResult.activeBuses} active buses currently monitored on live GPS grid.
+                                  </p>
+                                  <button 
+                                    onClick={() => setActiveTab('live')}
+                                    className="text-[10px] font-extrabold text-red-500 hover:underline flex items-center gap-1"
+                                  >
+                                    View Live Map Location <ArrowRight className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* MTC Transit Board Advisory News */}
+                        <div className="bg-amber-50 border border-amber-200 p-4 rounded-3xl space-y-2 text-xs">
+                          <span className="text-[10px] text-amber-800 font-black uppercase tracking-wider">Advisory Notice</span>
+                          <p className="text-slate-700 leading-relaxed font-sans text-[11px] font-medium">
+                            Festive special buses scheduled to run towards Adyar and Tambaram on weekends. Fares remain subsidized. Please verify identity documents prior to ticket inspections.
+                          </p>
                         </div>
                       </motion.div>
                     )}
@@ -798,10 +649,11 @@ export default function App() {
                         <div className="flex items-center justify-between pb-4 shrink-0" id="mtc-passes-header">
                           <h1 className="text-2xl font-display font-black text-white" id="passes-screen-title">Passes</h1>
                           <div className="flex gap-2">
-                            {/* Scan QR Button */}
+                            {/* QR Scanner Button */}
                             <button 
                               onClick={() => setShowScanner(true)}
-                              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#e6005c] hover:bg-[#c4004e] active:scale-95 transition-all text-xs font-bold rounded-full text-white shadow-md cursor-pointer"
+                              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#ff0055] hover:bg-[#db0048] active:scale-95 transition-all text-xs font-bold rounded-full text-white border border-[#ff0055]/20 shadow-md cursor-pointer select-none"
+                              id="btn-scan-qr"
                             >
                               <QrCode className="w-3.5 h-3.5" /> Scan QR
                             </button>
@@ -909,80 +761,81 @@ export default function App() {
                     )}
                   </div>
 
-                  {/* PERSISTENT STICKY BOTTOM UTILITY NAVIGATION BAR (Matching Screenshots 5, 6, 7) */}
-                  <div className="relative border-t border-slate-200 bg-white z-40 select-none">
-                    {/* Floating Center "BUS QR" Action Button */}
-                    <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-50">
-                      <button 
-                        onClick={() => setShowScanner(true)}
-                        className="bg-[#111827] text-white px-4 py-2 rounded-full shadow-xl flex items-center gap-2 border-2 border-white cursor-pointer hover:scale-105 active:scale-95 transition-transform"
-                      >
-                        <QrCode className="w-4 h-4 text-amber-400 animate-pulse" />
-                        <span className="text-xs font-black tracking-wide uppercase">BUS QR</span>
-                      </button>
-                    </div>
+                  {/* PERSISTENT STICKY BOTTOM UTILITY NAVIGATION BAR */}
+                  <div 
+                    className="absolute bottom-0 inset-x-0 h-16 bg-[#0a0a0a] border-t border-neutral-900 flex justify-around items-center z-40 select-none"
+                    id="sticky-bottom-nav"
+                  >
+                    {/* 1. Home button */}
+                    <button 
+                      onClick={() => setActiveTab('home')}
+                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                        activeTab === 'home' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                      }`}
+                    >
+                      <Home className="w-5 h-5 stroke-[2]" />
+                      <span className="text-[9px] font-sans font-semibold mt-0.5">Home</span>
+                    </button>
 
-                    <div className="h-16 flex justify-around items-center px-2" id="sticky-bottom-nav">
-                      {/* 1. Home button */}
-                      <button 
-                        onClick={() => setActiveTab('home')}
-                        className={`flex flex-col items-center justify-center w-14 h-12 transition-all cursor-pointer ${
-                          activeTab === 'home' ? 'text-[#ff0a24]' : 'text-slate-400 hover:text-slate-600'
-                        }`}
-                      >
-                        <Home className={`w-5 h-5 ${activeTab === 'home' ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
-                        <span className={`text-[10px] font-sans ${activeTab === 'home' ? 'font-black text-[#ff0a24]' : 'font-semibold'}`}>Home</span>
-                      </button>
+                    {/* 2. Passes button with numeric notification badge */}
+                    <button 
+                      onClick={() => setActiveTab('passes')}
+                      className={`relative flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                        activeTab === 'passes' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                      }`}
+                    >
+                      <CreditCard className="w-5 h-5 stroke-[2]" />
+                      <span className="text-[9px] font-sans font-semibold mt-0.5">Passes</span>
+                      
+                      {/* Red alert bubble numeric "1" matching screenshot exactly! */}
+                      <div className="absolute top-0.5 right-1.5 bg-[#df3d3d] text-white font-sans text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-black shadow">
+                        1
+                      </div>
+                    </button>
 
-                      {/* 2. Passes button with numeric notification badge */}
-                      <button 
-                        onClick={() => setActiveTab('passes')}
-                        className={`relative flex flex-col items-center justify-center w-14 h-12 transition-all cursor-pointer ${
-                          activeTab === 'passes' ? 'text-[#ff0a24]' : 'text-slate-400 hover:text-slate-600'
-                        }`}
-                      >
-                        <CreditCard className={`w-5 h-5 ${activeTab === 'passes' ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
-                        <span className={`text-[10px] font-sans ${activeTab === 'passes' ? 'font-black text-[#ff0a24]' : 'font-semibold'}`}>Passes</span>
-                        
-                        {/* Red alert bubble numeric "1" matching screenshot exactly */}
-                        <div className="absolute top-1 right-2.5 bg-[#df3d3d] text-white font-sans text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center border border-white shadow-xs">
-                          1
-                        </div>
-                      </button>
+                    {/* 3. Live tracking button */}
+                    <button 
+                      onClick={() => setActiveTab('live')}
+                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                        activeTab === 'live' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                      }`}
+                    >
+                      <Radio className="w-5 h-5 stroke-[2]" />
+                      <span className="text-[9px] font-sans font-semibold mt-0.5">Live</span>
+                    </button>
 
-                      {/* 3. Live tracking button */}
-                      <button 
-                        onClick={() => setActiveTab('live')}
-                        className={`flex flex-col items-center justify-center w-14 h-12 transition-all cursor-pointer ${
-                          activeTab === 'live' ? 'text-[#ff0a24]' : 'text-slate-400 hover:text-slate-600'
-                        }`}
-                      >
-                        <Radio className={`w-5 h-5 ${activeTab === 'live' ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
-                        <span className={`text-[10px] font-sans ${activeTab === 'live' ? 'font-black text-[#ff0a24]' : 'font-semibold'}`}>Live</span>
-                      </button>
+                    {/* 4. Ticket dispenser button */}
+                    <button 
+                      onClick={() => setActiveTab('ticket')}
+                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                        activeTab === 'ticket' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                      }`}
+                    >
+                      <Ticket className="w-5 h-5 stroke-[2]" />
+                      <span className="text-[9px] font-sans font-semibold mt-0.5">Ticket</span>
+                    </button>
 
-                      {/* 4. Ticket dispenser button */}
-                      <button 
-                        onClick={() => setActiveTab('ticket')}
-                        className={`flex flex-col items-center justify-center w-14 h-12 transition-all cursor-pointer ${
-                          activeTab === 'ticket' ? 'text-[#ff0a24]' : 'text-slate-400 hover:text-slate-600'
-                        }`}
-                      >
-                        <Ticket className={`w-5 h-5 ${activeTab === 'ticket' ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
-                        <span className={`text-[10px] font-sans ${activeTab === 'ticket' ? 'font-black text-[#ff0a24]' : 'font-semibold'}`}>Ticket</span>
-                      </button>
+                    {/* 5. Wallet button */}
+                    <button 
+                      onClick={() => setActiveTab('wallet')}
+                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                        activeTab === 'wallet' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                      }`}
+                    >
+                      <Wallet className="w-5 h-5 stroke-[2]" />
+                      <span className="text-[9px] font-sans font-semibold mt-0.5">Wallet</span>
+                    </button>
 
-                      {/* 5. Profile setup button */}
-                      <button 
-                        onClick={() => setActiveTab('profile')}
-                        className={`flex flex-col items-center justify-center w-14 h-12 transition-all cursor-pointer ${
-                          activeTab === 'profile' ? 'text-[#ff0a24]' : 'text-slate-400 hover:text-slate-600'
-                        }`}
-                      >
-                        <User className={`w-5 h-5 ${activeTab === 'profile' ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
-                        <span className={`text-[10px] font-sans ${activeTab === 'profile' ? 'font-black text-[#ff0a24]' : 'font-semibold'}`}>Profile</span>
-                      </button>
-                    </div>
+                    {/* 6. Profile setup button */}
+                    <button 
+                      onClick={() => setActiveTab('profile')}
+                      className={`flex flex-col items-center justify-center w-12 h-12 transition-all ${
+                        activeTab === 'profile' ? 'text-white scale-105' : 'text-neutral-500 hover:text-neutral-300'
+                      }`}
+                    >
+                      <User className="w-5 h-5 stroke-[2]" />
+                      <span className="text-[9px] font-sans font-semibold mt-0.5">Profile</span>
+                    </button>
                   </div>
 
                   {/* OVERLAYS & DRAWER COMPONENTS */}
@@ -1032,7 +885,7 @@ export default function App() {
                       </motion.div>
                     )}
 
-                    {/* 4. Camera & Simulated QR Code Scanner Overlay */}
+                    {/* QR Scanner Overlay */}
                     <QrScannerOverlay 
                       isOpen={showScanner} 
                       onClose={() => setShowScanner(false)} 

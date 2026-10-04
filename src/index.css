@@ -1,34 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600;1,9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Work+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-serif: "Lora", Georgia, serif;
-  --font-sans: "DM Sans", system-ui, -apple-system, sans-serif;
-  --font-mono: "DM Mono", monospace;
-
-  --color-bg-ink: #111111;
-  --color-bg-cream: #F2EBDC;
-  --color-bg-surface: #1A1A1A;
+  --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", serif;
+  --font-serif: "Fraunces", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
   
-  --color-text-primary: #F2EBDC;
-  --color-text-primaryDark: #111111;
-  --color-text-secondary: #A89984;
-  --color-text-muted: #6B5F52;
-
-  --color-accent-amber: #C08B4F;
-  --color-accent-brick: #8B4A3D;
-
-  --color-border-dark: #2A2A2A;
-  --color-border-light: #E5DDC9;
+  /* Classic Theme Colors (deep navy / slate colorways) */
+  --color-classic-950: #0a0f1d;
+  --color-classic-900: #0f172a;
+  --color-classic-800: #1e293b;
+  --color-classic-700: #334155;
+  --color-classic-600: #475569;
+  --color-classic-500: #64748b;
+  --color-classic-400: #94a3b8;
+  --color-classic-300: #cbd5e1;
+  --color-classic-200: #e2e8f0;
+  --color-classic-100: #f1f5f9;
+  --color-classic-50: #f8fafc;
 }
 
+/* Ensure global readable base font sizing */
 html, body {
-  font-family: var(--font-serif);
-  background-color: #111111;
-  color: #F2EBDC;
+  font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
 }
 
 /* Custom Scrollbar suppression for native feel */
@@ -40,13 +37,16 @@ html, body {
   scrollbar-width: none;
 }
 
-/* Pulse animation for loading skeletons */
-@keyframes pulse-subtle {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+/* Glassmorphism effects */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.animate-pulse-subtle {
-  animation: pulse-subtle 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.glass-card {
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
