@@ -41,11 +41,20 @@ import HistoryLogs from './components/HistoryLogs';
 import HelpSupport from './components/HelpSupport';
 import WalletTab from './components/WalletTab';
 import QrScannerOverlay from './components/QrScannerOverlay';
+import SplashScreen from './components/SplashScreen';
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState<boolean>(true);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
     return localStorage.getItem('findback_logged_in') === 'true';
   });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const [loginName, setLoginName] = useState('');
   const [loginMobile, setLoginMobile] = useState('');
@@ -303,6 +312,18 @@ export default function App() {
               </button>
             </div>
 
+            {/* Replay Splash Screen animation button */}
+            <button 
+              onClick={() => setShowSplash(true)}
+              className="w-full py-2.5 px-3 rounded-xl bg-slate-950 hover:bg-slate-850 border border-slate-800 text-left transition-all flex items-center justify-between cursor-pointer"
+            >
+              <div>
+                <span className="text-[9px] text-amber-500 block font-bold uppercase">Opening Animation</span>
+                <span className="text-xs text-slate-200 font-bold">Replay Splash Screen</span>
+              </div>
+              <Sparkles className="w-4 h-4 text-amber-400" />
+            </button>
+
             {/* Offline Simulation toggle */}
             <button 
               onClick={() => setIsOffline(prev => !prev)}
@@ -388,6 +409,13 @@ export default function App() {
             {/* Smart Screen Canvas Body */}
             <div className="flex-grow flex flex-col pt-7 pb-16 relative overflow-hidden" id="simulated-touch-screen">
               
+              {/* ANIMATED OPENING SPLASH SCREEN OVERLAY */}
+              <AnimatePresence>
+                {showSplash && (
+                  <SplashScreen onComplete={() => setShowSplash(false)} />
+                )}
+              </AnimatePresence>
+
               {!isLoggedIn ? (
                 /* BEAUTIFUL CHENNAI ONE RED & WHITE LOGIN SCREEN */
                 <motion.div
